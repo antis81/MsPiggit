@@ -1,0 +1,5 @@
+.DS_Store
+GeneratedFiles*/
+[Mm]akefile
+[Bb]uild*/
+*.o
