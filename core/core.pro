@@ -8,7 +8,7 @@ include(../app.pri)
 
 QT       += core gui
 
-TARGET = QtGit
+TARGET = MsPiggit
 TEMPLATE = app
 DESTDIR = $$BIN_BASE
 
@@ -32,5 +32,5 @@ FORMS    += \
     ui/repowindow.ui
 
 RESOURCES += \
-    resources/QtGitResource.qrc
+    resources/MsPiggitResource.qrc
 

@@ -3,3 +3,4 @@ GeneratedFiles*/
 [Mm]akefile
 [Bb]uild*/
 *.o
+*.user

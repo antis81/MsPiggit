@@ -4,8 +4,6 @@
 #
 #-------------------------------------------------
 
-include(../../app.pri)
-
 TARGET = QtUiExtensions
 DESTDIR = $$BIN_BASE
 TEMPLATE = lib
