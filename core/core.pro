@@ -32,5 +32,5 @@ FORMS    += \
     ui/repowindow.ui
 
 RESOURCES += \
-    resources/MsPiggitResource.qrc
+    resources/MsPiggitResources.qrc
 

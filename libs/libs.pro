@@ -1,4 +1,4 @@
-include(../../app.pri)
+include(../app.pri)
 
 TEMPLATE = subdirs
 CONFIG += ordered
