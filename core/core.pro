@@ -12,8 +12,7 @@ TARGET = MsPiggit
 TEMPLATE = app
 DESTDIR = $$BIN_BASE
 
-LIBS += -L$$BIN_BASE \
-    -lQtUiExtensions
+LIBS += -lz
 
 win32-msvc: LIBEXT=lib
 else: LIBEXT=a
