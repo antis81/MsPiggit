@@ -1,7 +1,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QDesktopWidget>
-#include "CSplashScreen.h"
+#include "csplashscreen.h"
 
 ////////////////////////////////////////////////////////////////////////////
 CSplashScreen::CSplashScreen(const QPixmap& thePixmap)
