@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QSplashScreen>
 #include <QtGui/QBitmap>
+#include <QtCore/QFile>
 
 #ifndef QT_NO_ANIMATION
 #include <QtCore/QPropertyAnimation>
@@ -13,6 +14,11 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // style
+    QFile f(":/styles/main.css");
+    if (f.open(QIODevice::ReadOnly))
+        a.setStyleSheet(f.readAll());
+
     QPixmap             splashPic = QPixmap(":/images/splash.png").scaledToHeight(200);
     splashPic.setMask(splashPic.mask());
     CSplashScreen *     splash = new CSplashScreen(splashPic);
@@ -23,7 +29,7 @@ int main(int argc, char *argv[])
     splash->show();
 
     QPropertyAnimation *    splashAni = new QPropertyAnimation(splash, "windowOpacity");
-    splashAni->setDuration(3000);
+    splashAni->setDuration(1500);
     splashAni->setStartValue(0.0);
     splashAni->setKeyValueAt(0.2, 1.0);
     splashAni->setEndValue(1.0);

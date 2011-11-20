@@ -1,0 +1,35 @@
+QMainWindow
+{
+    padding: 0px;
+}
+
+QDockWidget > QWidget
+{
+    padding: 0px;
+    margin: 0px;
+}
+
+QTreeView
+{
+    background: rgb(221,227,235);
+    border-color: 1px black;
+    margin: 0px;
+}
+
+ QSplitter::handle {
+     image: url(images/splitter.png);
+ }
+
+ QSplitter::handle:horizontal {
+     width: 3px;
+ }
+
+ QSplitter::handle:vertical {
+     height: 3px;
+ }
+
+/*
+ QSplitter::handle:pressed {
+     url(images/splitter_pressed.png);
+ }
+*/
