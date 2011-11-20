@@ -4,3 +4,4 @@ GeneratedFiles*/
 [Bb]uild*/
 *.o
 *.user
+doxygen/
