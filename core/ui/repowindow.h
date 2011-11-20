@@ -3,7 +3,13 @@
 
 #include <QMainWindow>
 
-namespace Ui {
+namespace LibQGit2
+{
+    class QGitRepository;
+}
+
+namespace Ui
+{
     class RepoWindow;
 }
 
@@ -15,8 +21,39 @@ public:
     explicit RepoWindow(QWidget *parent = 0);
     ~RepoWindow();
 
+private slots:
+    /**
+      Open a repository.
+      */
+    void openRepository();
+
 private:
     Ui::RepoWindow *ui;
+
+    /**
+      Setup the main menu actions.
+
+      @todo Future work: More menu flexibility is needed. Maybe a manager using text based menu config files would do better.
+      */
+    void setupMainMenu();
+
+    /**
+      Setup views for a repository.
+      */
+    void setupRepoView(QString path);
+
+    /**
+      Check if the repository path exist and if it is a directory. If not, show a message.
+
+      @return True if a directory exists at path. Otherwise false.
+      */
+    bool checkDirExists(const QString &path) const;
+
+    /**
+      Initializes the commit history view with an existing QGitRepository.
+      The repository must be valid and opened before.
+      */
+    void initCommitHistory(const LibQGit2::QGitRepository &repo);
 };
 
 #endif // REPOWINDOW_H
