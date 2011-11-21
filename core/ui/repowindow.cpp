@@ -84,9 +84,8 @@ bool RepoWindow::checkDirExists(const QString &path) const
 
 void RepoWindow::initCommitHistory(const QGitRepository &repo)
 {
-    //! @todo What is the right ref lookup here? Looking for "refs/heads/master" to get started.
-    QGitOId oid = repo.lookupRef("refs/heads/master").oid();
-    QMessageBox::information(0,"",tr("And the winner is ...\n%1").arg(QString(oid.format())));
+    QGitOId oid = repo.head().oid();
+    QMessageBox::information(0,"",tr("And the HEAD is ...\n%1").arg(QString(oid.format())));
     if (!oid.isValid())
     {
         //! @todo HEAD not found. Ask for repository initialization "git init".
@@ -96,6 +95,6 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
 
     // lookup the HEAD commit
     QGitCommit commit( repo.lookupCommit(oid) );
-    //QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
+    QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
     ui->tableCommits->setModel(new CommitModel(commit, 0));
 }
