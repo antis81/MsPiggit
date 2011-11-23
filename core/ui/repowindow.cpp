@@ -8,6 +8,8 @@
 #include <src/qgitcommit.h>
 
 #include <model/commitmodel.h>
+#include <model/referencemodel.h>
+#include <model/submodulemodel.h>
 
 using namespace LibQGit2;
 
@@ -65,8 +67,8 @@ void RepoWindow::setupRepoView(QString path)
     initCommitHistory(repo);
 
     //! @todo First I want to see the history work properly, then everything else.
-    //initReferences(repo);
-    //initSubmodules(repo)
+    initReferences(repo);
+    initSubmodules(repo);
 }
 
 bool RepoWindow::checkDirExists(const QString &path) const
@@ -84,17 +86,33 @@ bool RepoWindow::checkDirExists(const QString &path) const
 
 void RepoWindow::initCommitHistory(const QGitRepository &repo)
 {
-    QGitOId oid = repo.head().oid();
-    QMessageBox::information(0,"",tr("And the HEAD is ...\n%1").arg(QString(oid.format())));
-    if (!oid.isValid())
+    if (repo.isEmpty())
     {
-        //! @todo HEAD not found. Ask for repository initialization "git init".
-        QMessageBox::information(0,"",tr("Couldn't find HEAD commit. Aborting ..."));
+        // This is a fresh repo. So no refs or commits in there yet.
+        //! @todo Visualization of empty repo?
+        return;
+    }
+
+    // Lookup the HEAD ref.
+    const QGitRef headRef = repo.head();
+//    QMessageBox::information(0,"",tr("And the HEAD is ...\n%1").arg(QString(oid.format())));
+    if (headRef.isNull())
+    {
+        QMessageBox::critical(0,"",tr("Couldn't find HEAD commit. Aborting ..."));
         return;
     }
 
     // lookup the HEAD commit
-    QGitCommit commit( repo.lookupCommit(oid) );
-    QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
-    ui->tableCommits->setModel(new CommitModel(commit, 0));
+//    QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
+    ui->tableCommits->setModel(new CommitModel(repo.lookupCommit(headRef.oid()), 0));
+}
+
+void RepoWindow::initReferences(const QGitRepository &repo)
+{
+    ui->treeSubmodules->setModel(new ReferenceModel());
+}
+
+void RepoWindow::initSubmodules(const QGitRepository &repo)
+{
+    ui->treeRepoRefs->setModel(new SubmoduleModel());
 }

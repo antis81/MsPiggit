@@ -54,6 +54,18 @@ private:
       The repository must be valid and opened before.
       */
     void initCommitHistory(const LibQGit2::QGitRepository &repo);
+
+    /**
+      Initializes the references (branches, tags, remotes) view with an existing QGitRepository.
+      The repository must be valid and opened before.
+      */
+    void initReferences(const LibQGit2::QGitRepository &repo);
+
+    /**
+      Initializes the submodule view with an existing QGitRepository.
+      The repository must be valid and opened before.
+      */
+    void initSubmodules(const LibQGit2::QGitRepository &repo);
 };
 
 #endif // REPOWINDOW_H
