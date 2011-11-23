@@ -15,12 +15,10 @@ DESTDIR = $$BIN_BASE
 INCLUDEPATH += . ../libs ../libs/libqgit2 ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
 #DEPENDPATH += $$PWD/../libs/libqgit2
 
-LIBS += -lz
-
 unix:!symbian|win32: LIBS += \
     -L$$OUT_PWD/../libs/qtuiextensions -lQtUiExtensions \
-    -L$$OUT_PWD/../libs/libqgit2 -lqgit2
-
+    -L$$OUT_PWD/../libs/libqgit2 -lqgit2 \
+    -L/usr/lib -lz
 win32: {
 PRE_TARGETDEPS += \
     $$OUT_PWD/../libs/qtuiextensions/QtUiExtensions.lib \
