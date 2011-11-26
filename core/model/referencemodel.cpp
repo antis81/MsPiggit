@@ -7,6 +7,7 @@ ReferenceModel::ReferenceModel(QObject *parent)
 
 QVariant ReferenceModel::data(const QModelIndex &index, int role) const
 {
+    return QVariant();
 }
 
 Qt::ItemFlags ReferenceModel::flags(const QModelIndex &index) const
