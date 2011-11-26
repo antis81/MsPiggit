@@ -1,5 +1,8 @@
 #include "commitmodel.h"
 
+#include <src/qgitrepository.h>
+#include <src/qgitsignature.h>
+
 using namespace LibQGit2;
 
 
@@ -44,7 +47,7 @@ QVariant CommitModel::headerData(int section, Qt::Orientation orientation, int r
 
     if ((orientation == Qt::Horizontal)
             && (role == Qt::DisplayRole))
-        return _headCommit.message();
+        return "Column";
 
     return QVariant();
 }
@@ -54,24 +57,27 @@ QModelIndex CommitModel::index(int row, int column, const QModelIndex &parent) c
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    const QGitCommit *    parentCommit;
+    const QGitCommit *    parentCommit = 0;
 
     if (!parent.isValid())
         parentCommit = &_headCommit;
     else
         parentCommit = static_cast<QGitCommit *>(parent.internalPointer());
 
-    if (!parentCommit)
+    if (parentCommit == 0)
         return QModelIndex();
 
-    if (row < 0 || row >= parentCommit->parentCount())
-        return QModelIndex();
+    //! @todo Create the appropriate QModelIndex of the child item.
+    return createIndex(row, column, const_cast<QGitCommit *>(parentCommit));
 
-    QGitCommit childItem = parentCommit->parent(row);
-    if (childItem.data() != NULL)
-        return createIndex(row, column, &childItem);
-    else
-        return QModelIndex();
+//    if (row < 0 || row >= parentCommit->parentCount())
+//        return QModelIndex();
+
+//    QGitCommit childItem = parentCommit->parent(row);
+//    if (childItem.data() != NULL)
+//        return createIndex(row, column, &childItem);
+//    else
+//        return QModelIndex();
 }
 
 QModelIndex CommitModel::parent(const QModelIndex &index) const
@@ -93,16 +99,16 @@ QModelIndex CommitModel::parent(const QModelIndex &index) const
 
 int CommitModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid() || _headCommit.isNull())
+    if (_headCommit.isNull() )
         return 0;
 
     //! @todo Return the real commit count.
-    return 2 + _headCommit.parentCount();
+    return 1;
 }
 
 int CommitModel::columnCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid() || _headCommit.isNull())
+    if ( (_headCommit.isNull()) )
         return 0;
 
     //! @todo Return the selected header count for commits.
