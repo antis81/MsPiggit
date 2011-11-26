@@ -34,11 +34,20 @@ PRE_TARGETDEPS += \
 SOURCES += \
     main.cpp \
     ui/repowindow.cpp \
-    model/commitmodel.cpp
+#    model/refstreeviewmodel.cpp \
+#    view/delegates/refstreeviewitemdelegate.cpp
+    model/commitmodel.cpp \
+    model/referencemodel.cpp \
+    model/submodulemodel.cpp
 
 HEADERS  += \
     ui/repowindow.h \
-    model/commitmodel.h
+#    model/refstreeviewmodel.h \
+#    model/refstreeviewitemdelegate.h \
+#    view/delegates/refstreeviewitemdelegate.h
+    model/commitmodel.h \
+    model/referencemodel.h \
+    model/submodulemodel.h
 
 FORMS    += \
     ui/repowindow.ui
