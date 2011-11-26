@@ -56,7 +56,11 @@ void RepoWindow::setupRepoView(QString path)
 
     // open git repository and initialize views
     QGitRepository repo;
-    if (repo.open(path) != 0)
+    try
+    {
+        (repo.open(path));
+    }
+    catch (...)
     {
         QMessageBox::critical(this, tr("Unable to open repository."),
                               tr("Please check your repository path:\n%1").arg(path));
