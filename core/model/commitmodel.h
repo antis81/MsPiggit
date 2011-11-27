@@ -17,7 +17,7 @@ class CommitModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit CommitModel(const LibQGit2::QGitCommit &commit, QObject *parent = 0);
+    explicit CommitModel(QObject *parent = 0);
     ~CommitModel();
 
     /**
@@ -39,8 +39,8 @@ public:
     void setHeadCommit(const LibQGit2::QGitCommit &commit);
 
 private:
-    LibQGit2::QGitCommit    _headCommit;
-
+//    LibQGit2::QGitCommit            _headCommit;
+    QList<LibQGit2::QGitCommit>     _commits;
 };
 
 #endif // COMMITMODEL_H

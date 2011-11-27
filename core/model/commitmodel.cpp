@@ -2,13 +2,13 @@
 
 #include <src/qgitrepository.h>
 #include <src/qgitsignature.h>
+#include <src/qgitrevwalk.h>
 
 using namespace LibQGit2;
 
 
-CommitModel::CommitModel(const QGitCommit &commit, QObject *parent)
+CommitModel::CommitModel(QObject *parent)
     : QAbstractItemModel(parent)
-    , _headCommit(commit)
 {
 }
 
@@ -57,41 +57,36 @@ QModelIndex CommitModel::index(int row, int column, const QModelIndex &parent) c
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    const QGitCommit *    parentCommit = 0;
+    if (row >= _commits.count())
+        return QModelIndex();
+
+    const QGitCommit *  parentCommit = 0;
 
     if (!parent.isValid())
-        parentCommit = &_headCommit;
+        parentCommit = &(_commits.at(row));
     else
         parentCommit = static_cast<QGitCommit *>(parent.internalPointer());
 
     if (parentCommit == 0)
         return QModelIndex();
 
-    //! @todo Create the appropriate QModelIndex of the child item.
-    return createIndex(row, column, const_cast<QGitCommit *>(parentCommit));
-
-//    if (row < 0 || row >= parentCommit->parentCount())
-//        return QModelIndex();
-
-//    QGitCommit childItem = parentCommit->parent(row);
-//    if (childItem.data() != NULL)
-//        return createIndex(row, column, &childItem);
-//    else
-//        return QModelIndex();
+    return createIndex(row, 0, const_cast<QGitCommit *>(parentCommit));
 }
 
 QModelIndex CommitModel::parent(const QModelIndex &index) const
 {
+    return QModelIndex();
+
     if (!index.isValid())
         return QModelIndex();
 
     QGitCommit * childCommit( static_cast<QGitCommit *>(index.internalPointer()) );
 
-    if (childCommit->data() == NULL)
+    if (childCommit->isNull())
         return QModelIndex();
 
     QGitCommit parentCommit = childCommit->parent(0);
-    if ( (parentCommit.data() == NULL) || (parentCommit.data() == _headCommit.data()) )
+    if ( (parentCommit.data() == NULL) )
         return QModelIndex();
 
     return QModelIndex();// createIndex(parent.row(), 0, &parentCommit);
@@ -99,24 +94,36 @@ QModelIndex CommitModel::parent(const QModelIndex &index) const
 
 int CommitModel::rowCount(const QModelIndex &parent) const
 {
-    if (_headCommit.isNull() )
-        return 0;
-
-    //! @todo Return the real commit count.
-    return 1;
+    return _commits.count();
 }
 
 int CommitModel::columnCount(const QModelIndex &parent) const
 {
-    if ( (_headCommit.isNull()) )
-        return 0;
-
     //! @todo Return the selected header count for commits.
     return 1;
 }
 
 void CommitModel::setHeadCommit(const QGitCommit &commit)
 {
-    _headCommit = commit;
-    //! @todo Update the view!
+    if (commit.isNull())
+        return;
+
+    _commits.clear();
+//    _headCommit = commit;
+
+    //! @todo Read all commits using lazy loading. Cache is required for large repositories!
+    // read all commits from _headCommit downwards
+    QGitRepository repo = commit.owner();
+    QGitOId oid = commit.oid(); // oid to start with
+
+    QGitRevWalk walker(repo);
+    walker.setSorting(QGitRevWalk::Topological | QGitRevWalk::Time);
+    walker.push(oid);
+
+    while ( oid.isValid() )
+    {
+        oid = walker.next();
+        if (oid.isValid())
+            _commits.append( repo.lookupCommit(oid) );
+    }
 }

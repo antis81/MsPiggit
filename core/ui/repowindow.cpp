@@ -108,7 +108,9 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
 
     // lookup the HEAD commit
 //    QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
-    ui->tableCommits->setModel(new CommitModel(repo.lookupCommit(headRef.oid()), 0));
+    CommitModel *m = new CommitModel();
+    m->setHeadCommit( repo.lookupCommit(headRef.oid()) );
+    ui->tableCommits->setModel(m);
 }
 
 void RepoWindow::initReferences(const QGitRepository &repo)
