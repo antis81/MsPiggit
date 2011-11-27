@@ -108,6 +108,8 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     if (commit.isNull())
         return;
 
+    beginResetModel();
+
     _commits.clear();
 //    _headCommit = commit;
 
@@ -126,4 +128,6 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
         if (oid.isValid())
             _commits.append( repo.lookupCommit(oid) );
     }
+
+    endResetModel();
 }
