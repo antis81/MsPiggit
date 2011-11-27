@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 
+#include <model/commitmodel.h>
+#include <model/referencemodel.h>
+#include <model/submodulemodel.h>
+
 namespace LibQGit2
 {
     class QGitRepository;
@@ -13,6 +17,9 @@ namespace Ui
     class RepoWindow;
 }
 
+/**
+This is the main window to display a repositories content and dependencies.
+*/
 class RepoWindow : public QMainWindow
 {
     Q_OBJECT
@@ -29,6 +36,10 @@ private slots:
 
 private:
     Ui::RepoWindow *ui;
+
+    CommitModel     _commitModel;   //!< Manages the commit history.
+    ReferenceModel  _refModel;      //!< Manages the repos references
+    //SubmoduleModel  _subModModel;   //!< Manages the submodules
 
     /**
       Setup the main menu actions.

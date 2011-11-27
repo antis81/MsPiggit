@@ -3,6 +3,7 @@
 
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
 
 #include <src/qgitrepository.h>
 #include <src/qgitcommit.h>
@@ -14,13 +15,17 @@
 using namespace LibQGit2;
 
 
-RepoWindow::RepoWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::RepoWindow)
+RepoWindow::RepoWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::RepoWindow)
 {
     ui->setupUi(this);
 
     setupMainMenu();
+
+    // setup the models
+    ui->tableCommits->setModel(&_commitModel);
+    ui->treeRepoRefs->setModel(&_refModel);
 }
 
 RepoWindow::~RepoWindow()
@@ -99,7 +104,6 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
 
     // Lookup the HEAD ref.
     const QGitRef headRef = repo.head();
-//    QMessageBox::information(0,"",tr("And the HEAD is ...\n%1").arg(QString(oid.format())));
     if (headRef.isNull())
     {
         QMessageBox::critical(0,"",tr("Couldn't find HEAD commit. Aborting ..."));
@@ -107,18 +111,18 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
     }
 
     // lookup the HEAD commit
-//    QMessageBox::information(0,"",tr("The committer said:\n%1").arg(commit.message()));
-    CommitModel *m = new CommitModel();
-    m->setHeadCommit( repo.lookupCommit(headRef.oid()) );
-    ui->tableCommits->setModel(m);
+    _commitModel.setHeadCommit( repo.lookupCommit(headRef.oid()) );
+
+    //! @todo Set count label as view of the commit model.
+    ui->statusBar->showMessage(tr("%1 commits in repository").arg(_commitModel.rowCount()));
 }
 
 void RepoWindow::initReferences(const QGitRepository &repo)
 {
-    ui->treeSubmodules->setModel(new ReferenceModel());
+    //QGitRef ref = repo.data()
 }
 
 void RepoWindow::initSubmodules(const QGitRepository &repo)
 {
-    ui->treeRepoRefs->setModel(new SubmoduleModel());
+    //! @todo Submodules must be separated from the main repo as it should be the "root submodule".
 }
