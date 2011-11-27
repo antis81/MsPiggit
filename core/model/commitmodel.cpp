@@ -115,18 +115,17 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
 
     //! @todo Read all commits using lazy loading. Cache is required for large repositories!
     // read all commits from _headCommit downwards
-    QGitRepository repo = commit.owner();
-    QGitOId oid = commit.oid(); // oid to start with
 
-    QGitRevWalk walker(repo);
+    QGitRevWalk walker(commit.owner());
     walker.setSorting(QGitRevWalk::Topological | QGitRevWalk::Time);
-    walker.push(oid);
 
-    while ( oid.isValid() )
+    walker.push(commit); // initialize the walker
+
+    // walk revisions
+    QGitCommit c;
+    while ( walker.next(c) )
     {
-        oid = walker.next();
-        if (oid.isValid())
-            _commits.append( repo.lookupCommit(oid) );
+        _commits.append(c);
     }
 
     endResetModel();
