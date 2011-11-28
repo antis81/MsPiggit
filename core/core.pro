@@ -15,21 +15,19 @@ DESTDIR = $$BIN_BASE
 INCLUDEPATH += . ../libs ../libs/libqgit2 ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
 #DEPENDPATH += $$PWD/../libs/libqgit2
 
+win32-msvc: LIBEXT=lib
+else: LIBEXT=a
+
 unix:!symbian|win32: LIBS += \
     -L$$OUT_PWD/../libs/qtuiextensions -lQtUiExtensions \
     -L$$OUT_PWD/../libs/libqgit2 -lqgit2 \
     -L/usr/lib -lz
-win32: {
-PRE_TARGETDEPS += \
-    $$OUT_PWD/../libs/qtuiextensions/QtUiExtensions.lib \
-    $$OUT_PWD/../libs/libqgit2/libqgit2.lib
-}
-else:unix:!symbian: {
-PRE_TARGETDEPS += \
-    $$OUT_PWD/../libs/qtuiextensions/libQtUiExtensions.a \
-    $$OUT_PWD/../libs/libqgit2/libqgit2.a
-}
 
+!symbian: {
+PRE_TARGETDEPS += \
+    $$OUT_PWD/../libs/qtuiextensions/libQtUiExtensions.$${LIBEXT} \
+    $$OUT_PWD/../libs/libqgit2/libqgit2.$${LIBEXT}
+}
 
 SOURCES += \
     main.cpp \
