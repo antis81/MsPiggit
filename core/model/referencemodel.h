@@ -3,6 +3,18 @@
 
 #include <QAbstractItemModel>
 
+#include <src/qgitref.h>
+#include <model/headeritem.h>
+
+namespace LibQGit2
+{
+    class QGitRepository;
+}
+
+
+/**
+Model class for Git repository references (tags, branches, remotes).
+*/
 class ReferenceModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -22,8 +34,11 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
+    void setupRefs(const LibQGit2::QGitRepository &repo);
+
 private:
-    
+    QList<HeaderItem>           _headers;
+    QList<LibQGit2::QGitRef>    _refs;
 };
 
 #endif // REFERENCEMODEL_H

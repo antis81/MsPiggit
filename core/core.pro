@@ -34,13 +34,15 @@ SOURCES += \
     ui/repowindow.cpp \
     model/commitmodel.cpp \
     model/referencemodel.cpp \
-    model/submodulemodel.cpp
+    model/submodulemodel.cpp \
+    model/headeritem.cpp
 
 HEADERS  += \
     ui/repowindow.h \
     model/commitmodel.h \
     model/referencemodel.h \
-    model/submodulemodel.h
+    model/submodulemodel.h \
+    model/headeritem.h
 
 FORMS    += \
     ui/repowindow.ui

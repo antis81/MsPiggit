@@ -1,23 +1,41 @@
-QMainWindow
+QMainWindow 
 {
-    padding: 0px;
+    margin: 0px;
 }
 
-QDockWidget > QWidget
+QWidget#centralWidget, QDockWidget
 {
-    padding: 0px;
-    margin: 0px;
+    margin: 3px;
 }
 
 QTreeView
 {
-    background: rgb(221,227,235);
-    border-color: 1px black;
+    background-color: rgb(221,227,235);
+    border: 1px black;
+    margin: 0px;
+}
+
+QTreeView#treeRepoRefs
+{
+    background-image: url(':/images/bg.png');
+    color: rgb(221,227,235);
+}
+
+/*
+QTableView#tableCommits
+{
+    background-image: url(':/images/clouds.png');
+    background-attachment: fixed;
+}
+*/
+
+QSplitter
+{
     margin: 0px;
 }
 
  QSplitter::handle {
-     image: url(images/splitter.png);
+     image: url(images/splitter.png) 2px 2px;
  }
 
  QSplitter::handle:horizontal {

@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>images/splash.png</file>
         <file>styles/main.css</file>
+        <file>icons/branch.png</file>
+        <file>icons/remote.png</file>
+        <file>icons/tag.png</file>
+        <file>images/bg.png</file>
     </qresource>
 </RCC>
