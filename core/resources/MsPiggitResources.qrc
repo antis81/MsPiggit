@@ -6,5 +6,6 @@
         <file>icons/remote.png</file>
         <file>icons/tag.png</file>
         <file>images/bg.png</file>
+        <file>icons/folder.png</file>
     </qresource>
 </RCC>
