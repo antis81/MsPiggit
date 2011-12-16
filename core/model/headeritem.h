@@ -1,32 +1,16 @@
 #ifndef HEADERITEM_H
 #define HEADERITEM_H
 
-#include <QtCore/QString>
-#include <QtGui/QIcon>
+#include <model/treeitem.h>
 
 
 /**
 Describes a header item to use in a Tree-, Tablemodel.
 */
-class HeaderItem
+class HeaderItem : public TreeItem
 {
 public:
-    explicit HeaderItem();
-    explicit HeaderItem(const QString &text, const QIcon &icon, const QString &description = QString());
-
-    QString text() const;
-    void setText(const QString &text);
-
-    QString description() const;
-    void setDescription(const QString &description);
-
-    QIcon icon() const;
-    void setIcon(const QIcon &icon);
-    
-private:
-    QString     _text;
-    QString     _description;
-    QIcon       _icon;
+    explicit HeaderItem(const QString &filterPrefix);
 };
 
 #endif // HEADERITEM_H

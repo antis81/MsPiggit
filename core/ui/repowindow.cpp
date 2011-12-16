@@ -74,8 +74,6 @@ void RepoWindow::setupRepoView(QString path)
 
     // setup the views
     initCommitHistory(repo);
-
-    //! @todo First I want to see the history work properly, then everything else.
     initReferences(repo);
     initSubmodules(repo);
 }
@@ -119,7 +117,7 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
 
 void RepoWindow::initReferences(const QGitRepository &repo)
 {
-    //QGitRef ref = repo.data()
+    _refModel.setupRefs(repo);
 }
 
 void RepoWindow::initSubmodules(const QGitRepository &repo)

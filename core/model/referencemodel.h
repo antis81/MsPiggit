@@ -4,7 +4,8 @@
 #include <QAbstractItemModel>
 
 #include <src/qgitref.h>
-#include <model/headeritem.h>
+
+class TreeItem;
 
 namespace LibQGit2
 {
@@ -37,8 +38,12 @@ public:
     void setupRefs(const LibQGit2::QGitRepository &repo);
 
 private:
-    QList<HeaderItem>           _headers;
-    QList<LibQGit2::QGitRef>    _refs;
+    QList<TreeItem *>     _headers;
+
+    void setupTags(const LibQGit2::QGitRepository &repo);
+    void setupBranches(const LibQGit2::QGitRepository &repo);
+    void setupRemotes(const LibQGit2::QGitRepository &repo);
+
 };
 
 #endif // REFERENCEMODEL_H
