@@ -39,7 +39,6 @@ public:
     void setHeadCommit(const LibQGit2::QGitCommit &commit);
 
 private:
-//    LibQGit2::QGitCommit            _headCommit;
     QList<LibQGit2::QGitCommit>     _commits;
 };
 
