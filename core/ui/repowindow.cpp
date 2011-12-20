@@ -43,8 +43,14 @@ void RepoWindow::setupMainMenu()
 
 void RepoWindow::openRepository()
 {
-    QString repoPath = QFileDialog::getExistingDirectory(this, tr("Open a Repository"), QDir::homePath());
-    setupRepoView(repoPath);
+    QFileDialog fd;
+    fd.setFilter(QDir::AllDirs | QDir::Hidden);
+    fd.setDirectory(QDir::home());
+    fd.setWindowTitle( tr("Open a Repository") );
+    if ( (fd.exec() != QDialog::Accepted) || fd.selectedFiles().isEmpty() )
+        return;
+
+    setupRepoView(fd.selectedFiles().first());
 }
 
 void RepoWindow::setupRepoView(QString path)
