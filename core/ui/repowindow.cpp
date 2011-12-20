@@ -27,6 +27,7 @@ RepoWindow::RepoWindow(QWidget *parent)
     // setup the models
     ui->tableCommits->setModel(&_commitModel);
     ui->treeRepoRefs->setModel(&_refModel);
+    ui->treeSubmodules->setModel(&_submoduleModel);
 }
 
 RepoWindow::~RepoWindow()
@@ -131,4 +132,5 @@ void RepoWindow::initReferences(const QGitRepository &repo)
 void RepoWindow::initSubmodules(const QGitRepository &repo)
 {
     //! @todo Submodules must be separated from the main repo as it should be the "root submodule".
+    _submoduleModel.initialize(repo);
 }

@@ -3,6 +3,13 @@
 
 #include <QtCore/QAbstractItemModel>
 
+class TreeItem;
+
+namespace LibQGit2
+{
+    class QGitRepository;
+}
+
 class SubmoduleModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -22,8 +29,11 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
+    void initialize(const LibQGit2::QGitRepository &repo);
+
 private:
-    
+    TreeItem *      _mainRepoItem;
+
 };
 
 #endif // SUBMODULEMODEL_H
