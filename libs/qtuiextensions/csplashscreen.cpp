@@ -33,6 +33,8 @@ void CSplashScreen::showMessage(const QString& theMessage, int theAlignment/* = 
 ////////////////////////////////////////////////////////////////////////////
 void CSplashScreen::paintEvent(QPaintEvent* pe)
 {
+    Q_UNUSED(pe)
+
     QRect aTextRect(rect());
     aTextRect.setRect(aTextRect.x() + 5, aTextRect.y() + 5, aTextRect.width() - 10, aTextRect.height() - 10);
 

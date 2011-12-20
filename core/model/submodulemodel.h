@@ -1,7 +1,7 @@
 #ifndef SUBMODULEMODEL_H
 #define SUBMODULEMODEL_H
 
-#include <QAbstractItemModel>
+#include <QtCore/QAbstractItemModel>
 
 class SubmoduleModel : public QAbstractItemModel
 {

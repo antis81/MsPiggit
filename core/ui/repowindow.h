@@ -37,9 +37,9 @@ private slots:
 private:
     Ui::RepoWindow *ui;
 
-    CommitModel     _commitModel;   //!< Manages the commit history.
-    ReferenceModel  _refModel;      //!< Manages the repos references
-    //SubmoduleModel  _subModModel;   //!< Manages the submodules
+    CommitModel     _commitModel;       //!< Manages the commit history.
+    ReferenceModel  _refModel;          //!< Manages the repos references
+    SubmoduleModel  _submoduleModel;    //!< Manages the submodules
 
     /**
       Setup the main menu actions.

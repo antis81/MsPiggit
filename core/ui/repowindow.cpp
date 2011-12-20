@@ -52,23 +52,15 @@ void RepoWindow::setupRepoView(QString path)
     if (path.isEmpty() || !checkDirExists(path))
         return;
 
-    // add .git dir to initialize repo (otherwise a bare repo is assumed)
-    QDir repoDir(path);
-    repoDir.setFilter(QDir::Hidden | QDir::Dirs);
-    //repoDir.setSorting(Qt::AscendingOrder);
-    if ( repoDir.entryList().contains(".git") )
-        path += "/.git";
-
     // open git repository and initialize views
     QGitRepository repo;
     try
     {
-        (repo.open(path));
+        repo.discoverAndOpen(path);
     }
-    catch (...)
+    catch (LibQGit2::QGitException e)
     {
-        QMessageBox::critical(this, tr("Unable to open repository."),
-                              tr("Please check your repository path:\n%1").arg(path));
+        QMessageBox::critical( this, tr("Unable to open repository."), e.message() );
         return;
     }
 

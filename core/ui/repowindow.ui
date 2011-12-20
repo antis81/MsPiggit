@@ -33,6 +33,9 @@
        <property name="uniformRowHeights">
         <bool>true</bool>
        </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QTableView" name="tableCommits">
        <property name="sizePolicy">
@@ -108,7 +111,14 @@
       <number>3</number>
      </property>
      <item row="0" column="0">
-      <widget class="QTreeView" name="treeSubmodules"/>
+      <widget class="QTreeView" name="treeSubmodules">
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

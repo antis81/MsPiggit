@@ -1,7 +1,7 @@
 #ifndef COMMITMODEL_H
 #define COMMITMODEL_H
 
-#include <QAbstractItemModel>
+#include <QtCore/QAbstractItemModel>
 
 #include <src/qgitcommit.h>
 

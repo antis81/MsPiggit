@@ -7,6 +7,11 @@ TreeItem::TreeItem(const QString &name)
 {
 }
 
+TreeItem::~TreeItem()
+{
+    qDeleteAll(_children);
+}
+
 const QString & TreeItem::acceptedChildTypes() const
 {
     return _acceptedChildTypes;

@@ -9,6 +9,7 @@ class TreeItem
 {
 public:
     explicit TreeItem(const QString &name);
+    virtual ~TreeItem();
 
     const QString &acceptedChildTypes() const;
     void setAcceptedChildTypes(const QString &types);
