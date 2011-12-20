@@ -77,6 +77,11 @@ private:
       The repository must be valid and opened before.
       */
     void initSubmodules(const LibQGit2::QGitRepository &repo);
+
+    /**
+      Show the repository name in the window title.
+      */
+    void updateWindowTitle(const LibQGit2::QGitRepository &repo);
 };
 
 #endif // REPOWINDOW_H

@@ -7,6 +7,7 @@
 
 #include <src/qgitrepository.h>
 #include <src/qgitcommit.h>
+#include <src/qgitexception.h>
 
 #include <model/commitmodel.h>
 #include <model/referencemodel.h>
@@ -63,6 +64,7 @@ void RepoWindow::setupRepoView(QString path)
     try
     {
         repo.discoverAndOpen(path);
+        updateWindowTitle( repo );
     }
     catch (LibQGit2::QGitException e)
     {
@@ -74,6 +76,14 @@ void RepoWindow::setupRepoView(QString path)
     initCommitHistory(repo);
     initReferences(repo);
     initSubmodules(repo);
+}
+
+void RepoWindow::updateWindowTitle(const QGitRepository &repo)
+{
+    QString title = "Repository: " + repo.name();
+    if ( repo.isBare() )
+        title += QString(" (BARE)");
+    setWindowTitle(title);
 }
 
 bool RepoWindow::checkDirExists(const QString &path) const
