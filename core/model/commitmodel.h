@@ -2,6 +2,7 @@
 #define COMMITMODEL_H
 
 #include <QtCore/QAbstractItemModel>
+#include <QtCore/QStringList>
 
 #include <src/qgitcommit.h>
 
@@ -40,6 +41,12 @@ public:
 
 private:
     QList<LibQGit2::QGitCommit>     _commits;
+    QStringList                     _headers;
+
+    /**
+      Helper function to retreive the correct text for the column specified by the model index.
+      */
+    QVariant commitData(int col, const LibQGit2::QGitCommit *commit) const;
 };
 
 #endif // COMMITMODEL_H

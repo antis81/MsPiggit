@@ -10,6 +10,12 @@ using namespace LibQGit2;
 CommitModel::CommitModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
+    _headers << tr("Message")
+             << tr("Author")
+             << tr("email")
+             << tr("Date")
+             << tr("Id")
+                ;
 }
 
 CommitModel::~CommitModel()
@@ -24,9 +30,9 @@ QVariant CommitModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole)
     {
-        QGitCommit * commit( static_cast<QGitCommit *>(index.internalPointer()) );
+        QGitCommit * commit = static_cast<QGitCommit *>(index.internalPointer());
 
-        return commit->message();
+        return commitData(index.column(), commit);
     }
 
     // Request for unhandled data role
@@ -43,11 +49,11 @@ Qt::ItemFlags CommitModel::flags(const QModelIndex &index) const
 
 QVariant CommitModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    Q_UNUSED(section)
-
-    if ((orientation == Qt::Horizontal)
-            && (role == Qt::DisplayRole))
-        return "Column";
+    if ( (orientation == Qt::Horizontal) && (role == Qt::DisplayRole)
+        &&  (_headers.count() > section) )
+    {
+        return _headers[section];
+    }
 
     return QVariant();
 }
@@ -70,7 +76,7 @@ QModelIndex CommitModel::index(int row, int column, const QModelIndex &parent) c
     if (parentCommit == 0)
         return QModelIndex();
 
-    return createIndex(row, 0, const_cast<QGitCommit *>(parentCommit));
+    return createIndex(row, column, const_cast<QGitCommit *>(parentCommit));
 }
 
 QModelIndex CommitModel::parent(const QModelIndex &index) const
@@ -100,7 +106,7 @@ int CommitModel::rowCount(const QModelIndex &parent) const
 int CommitModel::columnCount(const QModelIndex &parent) const
 {
     //! @todo Return the selected header count for commits.
-    return 1;
+    return _headers.count();
 }
 
 void CommitModel::setHeadCommit(const QGitCommit &commit)
@@ -129,4 +135,18 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     }
 
     endResetModel();
+}
+
+QVariant CommitModel::commitData(int col, const QGitCommit *commit) const
+{
+    switch (col)
+    {
+    default: return QVariant();
+
+    case 0: return commit->message();
+    case 1: return commit->author().name();
+    case 2: return commit->author().email();
+    case 3: return commit->dateTime();
+    case 4: return QString( commit->oid().format() );
+    }
 }

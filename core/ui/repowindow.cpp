@@ -26,6 +26,7 @@ RepoWindow::RepoWindow(QWidget *parent)
 
     // setup the models
     ui->tableCommits->setModel(&_commitModel);
+    ui->tableCommits->horizontalHeader()->setMovable(true);
     ui->treeRepoRefs->setModel(&_refModel);
     ui->treeSubmodules->setModel(&_submoduleModel);
 }
