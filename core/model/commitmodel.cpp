@@ -117,11 +117,10 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     beginResetModel();
 
     _commits.clear();
-//    _headCommit = commit;
 
     //! @todo Read all commits using lazy loading. Cache is required for large repositories!
-    // read all commits from _headCommit downwards
 
+    // read all commits from _headCommit downwards
     QGitRevWalk walker(commit.owner());
     walker.setSorting(QGitRevWalk::Topological | QGitRevWalk::Time);
 
@@ -143,7 +142,7 @@ QVariant CommitModel::commitData(int col, const QGitCommit *commit) const
     {
     default: return QVariant();
 
-    case 0: return commit->message();
+    case 0: return commit->shortMessage();
     case 1: return commit->author().name();
     case 2: return commit->author().email();
     case 3: return commit->dateTime();
