@@ -1,3 +1,22 @@
+/**
+**    Copyright (c) 2011 by Nils Fenner
+**
+**    This file is part of MsPiggit.
+**
+**    MsPiggit is free software: you can redistribute it and/or modify
+**    it under the terms of the GNU General Public License as published by
+**    the Free Software Foundation, either version 3 of the License, or
+**    (at your option) any later version.
+**
+**    MsPiggit is distributed in the hope that it will be useful,
+**    but WITHOUT ANY WARRANTY; without even the implied warranty of
+**    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**    GNU General Public License for more details.
+**
+**    You should have received a copy of the GNU General Public License
+**    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "repowindow.h"
 #include "ui_repowindow.h"
 
@@ -12,6 +31,8 @@
 #include <model/commitmodel.h>
 #include <model/referencemodel.h>
 #include <model/submodulemodel.h>
+
+#include <ui/commitdelegate.h>
 
 using namespace LibQGit2;
 
@@ -28,6 +49,8 @@ RepoWindow::RepoWindow(QWidget *parent)
     ui->tableCommits->setModel(&_commitModel);
     ui->tableCommits->horizontalHeader()->setHighlightSections(false);
     ui->tableCommits->horizontalHeader()->setMovable(true);
+    //! @todo use a moveable column index instead of fixed one
+    ui->tableCommits->setItemDelegateForColumn(0, new CommitDelegate());
     ui->treeRepoRefs->setModel(&_refModel);
     ui->treeSubmodules->setModel(&_submoduleModel);
 }
@@ -121,6 +144,10 @@ void RepoWindow::initCommitHistory(const QGitRepository &repo)
 
     // lookup the HEAD commit
     _commitModel.setHeadCommit( repo.lookupCommit(headRef.oid()) );
+    ui->tableCommits->resizeColumnsToContents();
+
+    //! @todo For testing. All rows shall contain the "short" message format instead of the complete commit message.
+    //ui->tableCommits->resizeRowsToContents();
 
     //! @todo Set count label as view of the commit model.
     ui->statusBar->showMessage(tr("%1 commits in repository").arg(_commitModel.rowCount()));

@@ -1,5 +1,5 @@
 /**
-**    Copyright (c) 2011 by Nils Fenner
+**    Copyright (c) 2011 by Nils Fenner 
 **
 **    This file is part of MsPiggit.
 **
@@ -17,13 +17,3 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "headeritem.h"
-
-
-#include <QDebug>
-
-HeaderItem::HeaderItem(const QString & filterPrefix)
-    : TreeItem("HEADER")
-{
-    setAcceptedChildTypes( filterPrefix );
-}
