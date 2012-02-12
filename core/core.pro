@@ -36,7 +36,8 @@ SOURCES += \
     model/referencemodel.cpp \
     model/submodulemodel.cpp \
     model/headeritem.cpp \
-    model/treeitem.cpp
+    model/treeitem.cpp \
+    ui/graphdelegate.cpp
 
 HEADERS  += \
     ui/repowindow.h \
@@ -44,7 +45,8 @@ HEADERS  += \
     model/referencemodel.h \
     model/submodulemodel.h \
     model/headeritem.h \
-    model/treeitem.h
+    model/treeitem.h \
+    ui/graphdelegate.h
 
 FORMS    += \
     ui/repowindow.ui
