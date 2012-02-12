@@ -43,6 +43,11 @@ RepoWindow::RepoWindow(QWidget *parent)
 
     setupMainMenu();
 
+#ifdef Q_OS_MACX
+    ui->treeRepoRefs->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->treeSubmodules->setAttribute(Qt::WA_MacShowFocusRect, 0);
+#endif
+
     // setup the views
     ui->tableCommits->setModel(&_commitModel);
     ui->tableCommits->horizontalHeader()->setHighlightSections(false);
