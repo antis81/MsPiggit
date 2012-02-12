@@ -59,7 +59,7 @@ public:
     void setHeadCommit(const LibQGit2::QGitCommit &commit);
 
 private:
-    QList<LibQGit2::QGitCommit>     _commits;
+    QList<LibQGit2::QGitCommit>     _commits; //!< ordered list of commits.
     QStringList                     _headers;
 
     /**
