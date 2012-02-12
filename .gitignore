@@ -5,3 +5,10 @@ GeneratedFiles*/
 *.o
 *.user
 doxygen/
+
+# binaries
+*.a
+*.dylib
+*.exe
+*.dll
+*.lib
