@@ -32,8 +32,6 @@
 #include <model/referencemodel.h>
 #include <model/submodulemodel.h>
 
-#include <ui/commitdelegate.h>
-
 using namespace LibQGit2;
 
 
@@ -49,8 +47,6 @@ RepoWindow::RepoWindow(QWidget *parent)
     ui->tableCommits->setModel(&_commitModel);
     ui->tableCommits->horizontalHeader()->setHighlightSections(false);
     ui->tableCommits->horizontalHeader()->setMovable(true);
-    //! @todo use a moveable column index instead of fixed one
-    ui->tableCommits->setItemDelegateForColumn(0, new CommitDelegate());
     ui->treeRepoRefs->setModel(&_refModel);
     ui->treeSubmodules->setModel(&_submoduleModel);
 }
