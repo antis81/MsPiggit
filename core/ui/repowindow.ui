@@ -26,7 +26,7 @@
       <widget class="QTreeView" name="treeRepoRefs">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>30</horstretch>
+         <horstretch>20</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -40,7 +40,7 @@
       <widget class="QTableView" name="tableCommits">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>70</horstretch>
+         <horstretch>80</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -68,6 +68,9 @@
        <property name="wordWrap">
         <bool>false</bool>
        </property>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>true</bool>
+       </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
        </attribute>
