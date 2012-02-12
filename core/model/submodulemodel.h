@@ -22,7 +22,7 @@
 
 #include <QtCore/QAbstractItemModel>
 
-class TreeItem;
+template <typename T> class TreeItem;
 
 namespace LibQGit2
 {
@@ -51,7 +51,7 @@ public:
     void initialize(const LibQGit2::QGitRepository &repo);
 
 private:
-    TreeItem *      _mainRepoItem;
+    TreeItem<LibQGit2::QGitRepository> *      _mainRepoItem;
 
 };
 

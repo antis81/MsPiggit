@@ -24,7 +24,7 @@
 
 #include <src/qgitref.h>
 
-class TreeItem;
+template <typename T> class TreeItem;
 
 namespace LibQGit2
 {
@@ -57,7 +57,7 @@ public:
     void setupRefs(const LibQGit2::QGitRepository &repo);
 
 private:
-    QList<TreeItem *>     _headers;
+    QList<TreeItem<LibQGit2::QGitRef> *>     _headers;
 
     void setupTags(const LibQGit2::QGitRepository &repo);
     void setupBranches(const LibQGit2::QGitRepository &repo);

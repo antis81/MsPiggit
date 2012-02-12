@@ -22,14 +22,21 @@
 
 #include <model/treeitem.h>
 
-
 /**
 Describes a header item to use in a Tree-, Tablemodel.
 */
-class HeaderItem : public TreeItem
+template<typename T>
+class HeaderItem : public TreeItem<T>
 {
 public:
-    explicit HeaderItem(const QString &filterPrefix);
+    typedef T TDataType;
+    typedef T * TDataTypePtr;
+
+    explicit HeaderItem(const QString &filterPrefix, TDataTypePtr data = 0)
+        : TreeItem<T>("HEADER", data)
+    {
+        TreeItem<T>::setAcceptedChildTypes( filterPrefix );
+    }
 };
 
 #endif // HEADERITEM_H

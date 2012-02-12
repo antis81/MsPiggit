@@ -34,9 +34,7 @@ SOURCES += \
     ui/repowindow.cpp \
     model/commitmodel.cpp \
     model/referencemodel.cpp \
-    model/submodulemodel.cpp \
-    model/headeritem.cpp \
-    model/treeitem.cpp
+    model/submodulemodel.cpp
 
 HEADERS  += \
     ui/repowindow.h \

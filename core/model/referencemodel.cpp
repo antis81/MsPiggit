@@ -33,7 +33,7 @@ QVariant ReferenceModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    TreeItem * item = static_cast<TreeItem *>(index.internalPointer());
+    TreeItem<LibQGit2::QGitRef> * item = static_cast<TreeItem<LibQGit2::QGitRef> *>(index.internalPointer());
 
     if (role == Qt::DisplayRole)
     {
@@ -47,10 +47,12 @@ QVariant ReferenceModel::data(const QModelIndex &index, int role) const
     {
         return item->description();
     }
-//    else if (role == Qt::BackgroundRole)
-//    {
-//        return QColor(0x00, 0x00, 0xFF, 0x20);
-//    }
+    else if (role == Qt::BackgroundRole)
+    {
+        LibQGit2::QGitRef * ref = item->data();
+        if ( (ref != 0) && (ref->oid() == ref->owner().head().oid()) )
+            return QColor(0xFF, 0x00, 0x00, 0x80);
+    }
 
     return QVariant();
 }
@@ -83,11 +85,11 @@ QModelIndex ReferenceModel::index(int row, int column, const QModelIndex &parent
     }
     else
     {
-        TreeItem * parentItem;
-        parentItem = static_cast<TreeItem *>(parent.internalPointer());
+        TreeItem<LibQGit2::QGitRef> * parentItem;
+        parentItem = static_cast<TreeItem<LibQGit2::QGitRef> *>(parent.internalPointer());
 
         // there is a parent - must be a treeitem
-        TreeItem * childItem = parentItem->children()[row];
+        TreeItem<LibQGit2::QGitRef> * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);
     }
@@ -100,11 +102,11 @@ QModelIndex ReferenceModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem = static_cast<TreeItem *>(index.internalPointer());
+    TreeItem<LibQGit2::QGitRef> *childItem = static_cast<TreeItem<LibQGit2::QGitRef> *>(index.internalPointer());
     if (childItem == 0)
         return QModelIndex();
 
-    TreeItem *parentItem = childItem->parent();
+    TreeItem<LibQGit2::QGitRef> *parentItem = childItem->parent();
     if (parentItem == 0)
         return QModelIndex();
 
@@ -117,7 +119,7 @@ int ReferenceModel::rowCount(const QModelIndex &parent) const
     if (!parent.isValid())
         return _headers.count();
 
-    return static_cast<TreeItem *>(parent.internalPointer())->children().count();
+    return static_cast<TreeItem<LibQGit2::QGitRef> *>(parent.internalPointer())->children().count();
 }
 
 int ReferenceModel::columnCount(const QModelIndex &parent) const
@@ -134,19 +136,19 @@ void ReferenceModel::setupRefs(const LibQGit2::QGitRepository &repo)
     qDeleteAll(_headers);
     _headers.clear();
 
-    HeaderItem * branchItem = new HeaderItem("^(refs/heads/)");
+    HeaderItem<LibQGit2::QGitRef> * branchItem = new HeaderItem<LibQGit2::QGitRef>("^(refs/heads/)");
     branchItem->setText("Branches");
     branchItem->setIcon( QIcon(":/icons/branch.png") );
     branchItem->setDescription( tr("The active repositories branches.") );
     branchItem->setPathSeparator("/");
 
-    HeaderItem * remoteItem = new HeaderItem( "^(refs/remotes/)" );
+    HeaderItem<LibQGit2::QGitRef> * remoteItem = new HeaderItem<LibQGit2::QGitRef>( "^(refs/remotes/)" );
     remoteItem->setText("Remotes");
     remoteItem->setIcon( QIcon(":/icons/remote.png") );
     remoteItem->setDescription( tr("The active repositories remote references.") );
     remoteItem->setPathSeparator("/");
 
-    HeaderItem * tagItem = new HeaderItem("^(refs/tags/)");
+    HeaderItem<LibQGit2::QGitRef> * tagItem = new HeaderItem<LibQGit2::QGitRef>("^(refs/tags/)");
     tagItem->setText("Tags");
     tagItem->setIcon( QIcon(":/icons/tag.png") );
     tagItem->setDescription( tr("The active repositories version tags.") );
@@ -167,7 +169,7 @@ void ReferenceModel::setupBranches(const LibQGit2::QGitRepository &repo)
     {
         // try to match the item by it's filter prefix
         int i = 0;
-        TreeItem * toAdd = 0;
+        TreeItem<LibQGit2::QGitRef> * toAdd = 0;
         while ( (toAdd == 0) && (i < _headers.count()) )
         {
             toAdd = _headers[i]->appendChild(refs.first());
