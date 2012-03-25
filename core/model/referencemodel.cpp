@@ -19,8 +19,15 @@
 
 #include "referencemodel.h"
 
-#include "src/qgitrepository.h"
-#include "model/headeritem.h"
+#include <src/qgitrepository.h>
+#include <model/treeitem.h>
+#include <model/treebuilder.h>
+#include <model/msptypeinfo.h>
+
+#include <QtGui/QLinearGradient>
+
+
+Q_DECLARE_METATYPE( LibQGit2::QGitRef )
 
 
 ReferenceModel::ReferenceModel(QObject *parent)
@@ -33,25 +40,30 @@ QVariant ReferenceModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    TreeItem<LibQGit2::QGitRef> * item = static_cast<TreeItem<LibQGit2::QGitRef> *>(index.internalPointer());
+    TreeItem * item = static_cast<TreeItem *>(index.internalPointer());
 
     if (role == Qt::DisplayRole)
     {
-        return item->text();
+        return QString("%1").arg(item->text());
     }
     else if (role == Qt::DecorationRole)
     {
-        return item->icon();
+        return MSPTypeInfo::instance().value(item->type(), "icon");
     }
     else if (role == Qt::ToolTipRole)
     {
-        return item->description();
+        return MSPTypeInfo::instance().value(item->type(), "tooltip");
     }
-    else if (role == Qt::BackgroundRole)
+    else if (role == Qt::ForegroundRole)
     {
-        LibQGit2::QGitRef * ref = item->data();
-        if ( (ref != 0) && (ref->oid() == ref->owner().head().oid()) )
-            return QColor(0xFF, 0x00, 0x00, 0x80);
+        if ( item->data().canConvert<LibQGit2::QGitRef>() )
+        {
+            const LibQGit2::QGitRef & ref = item->data().value<LibQGit2::QGitRef>();
+            if ( _repo.head().oid() == ref.oid() )
+            {
+                return QColor(0xFF, 0x85, 0x00, 0xFF);
+            }
+        }
     }
 
     return QVariant();
@@ -59,8 +71,16 @@ QVariant ReferenceModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags ReferenceModel::flags(const QModelIndex &index) const
 {
-    Q_UNUSED(index);
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    Qt::ItemFlags flags = Qt::ItemIsEnabled;
+
+    if (!index.isValid())
+        return Qt::NoItemFlags;
+
+    TreeItem * item = static_cast<TreeItem *>(index.internalPointer());
+    if ( MSPTypeInfo::instance().matchedType(item->type()) != "__HEADER__" )
+        flags |= Qt::ItemIsSelectable;
+
+    return flags;
 }
 
 QVariant ReferenceModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -85,11 +105,11 @@ QModelIndex ReferenceModel::index(int row, int column, const QModelIndex &parent
     }
     else
     {
-        TreeItem<LibQGit2::QGitRef> * parentItem;
-        parentItem = static_cast<TreeItem<LibQGit2::QGitRef> *>(parent.internalPointer());
+        TreeItem * parentItem;
+        parentItem = static_cast<TreeItem *>(parent.internalPointer());
 
         // there is a parent - must be a treeitem
-        TreeItem<LibQGit2::QGitRef> * childItem = parentItem->children()[row];
+        TreeItem * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);
     }
@@ -102,11 +122,11 @@ QModelIndex ReferenceModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem<LibQGit2::QGitRef> *childItem = static_cast<TreeItem<LibQGit2::QGitRef> *>(index.internalPointer());
+    TreeItem *childItem = static_cast<TreeItem *>(index.internalPointer());
     if (childItem == 0)
         return QModelIndex();
 
-    TreeItem<LibQGit2::QGitRef> *parentItem = childItem->parent();
+    TreeItem *parentItem = childItem->parent();
     if (parentItem == 0)
         return QModelIndex();
 
@@ -119,7 +139,7 @@ int ReferenceModel::rowCount(const QModelIndex &parent) const
     if (!parent.isValid())
         return _headers.count();
 
-    return static_cast<TreeItem<LibQGit2::QGitRef> *>(parent.internalPointer())->children().count();
+    return static_cast<TreeItem *>(parent.internalPointer())->children().count();
 }
 
 int ReferenceModel::columnCount(const QModelIndex &parent) const
@@ -136,23 +156,18 @@ void ReferenceModel::setupRefs(const LibQGit2::QGitRepository &repo)
     qDeleteAll(_headers);
     _headers.clear();
 
-    HeaderItem<LibQGit2::QGitRef> * branchItem = new HeaderItem<LibQGit2::QGitRef>("^(refs/heads/)");
+    TreeItem * branchItem = new TreeItem("__HEADER_BRANCHES__");
+    branchItem->setAcceptedTypes( QStringList() << "__FOLDER__" << "ref_branch" );
     branchItem->setText("Branches");
-    branchItem->setIcon( QIcon(":/icons/branch.png") );
-    branchItem->setDescription( tr("The active repositories branches.") );
-    branchItem->setPathSeparator("/");
 
-    HeaderItem<LibQGit2::QGitRef> * remoteItem = new HeaderItem<LibQGit2::QGitRef>( "^(refs/remotes/)" );
+    TreeItem * remoteItem = new TreeItem("__HEADER_REMOTES__");
+    remoteItem->setAcceptedTypes( QStringList() << "__FOLDER__" << "ref_remote" );
     remoteItem->setText("Remotes");
-    remoteItem->setIcon( QIcon(":/icons/remote.png") );
-    remoteItem->setDescription( tr("The active repositories remote references.") );
-    remoteItem->setPathSeparator("/");
 
-    HeaderItem<LibQGit2::QGitRef> * tagItem = new HeaderItem<LibQGit2::QGitRef>("^(refs/tags/)");
+    TreeItem * tagItem = new TreeItem("__HEADER_TAGS__");
+    tagItem->setAcceptedTypes( QStringList() << "__FOLDER__" << "ref_tag" );
     tagItem->setText("Tags");
-    tagItem->setIcon( QIcon(":/icons/tag.png") );
-    tagItem->setDescription( tr("The active repositories version tags.") );
-    tagItem->setPathSeparator("[/\\._-]");
+//    tagItem->setPathSeparator("[/\\._-]");
 
     _headers << branchItem << remoteItem << tagItem;
 
@@ -163,19 +178,25 @@ void ReferenceModel::setupRefs(const LibQGit2::QGitRepository &repo)
 
 void ReferenceModel::setupBranches(const LibQGit2::QGitRepository &repo)
 {
-    //! @todo this is a list of all references, filter by branches
+    _repo = repo;
     QStringList refs = repo.listReferences();
     while (!refs.isEmpty())
     {
+        QString candidate = refs.takeFirst();
+        QString type = MSPTypeInfo::instance().matchedType(candidate);
+
         // try to match the item by it's filter prefix
         int i = 0;
-        TreeItem<LibQGit2::QGitRef> * toAdd = 0;
-        while ( (toAdd == 0) && (i < _headers.count()) )
+        while ( i < _headers.count() )
         {
-            toAdd = _headers[i]->appendChild(refs.first());
+            if ( _headers.at(i)->accepts(type) )
+            {
+                TreeItem * item = new TreeItem( type, QVariant::fromValue(repo.lookupRef(candidate)) );
+
+                candidate.remove(QRegExp("^(refs/\\w*/)"));
+                TreeBuilder::instance().insertItem(item, _headers[i], candidate, "");
+            }
             ++i;
         }
-
-        refs.removeFirst();
     }
 }

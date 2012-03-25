@@ -23,13 +23,9 @@
 #include <QAbstractItemModel>
 
 #include <src/qgitref.h>
+#include <src/qgitrepository.h>
 
-template <typename T> class TreeItem;
-
-namespace LibQGit2
-{
-    class QGitRepository;
-}
+class TreeItem;
 
 
 /**
@@ -57,11 +53,10 @@ public:
     void setupRefs(const LibQGit2::QGitRepository &repo);
 
 private:
-    QList<TreeItem<LibQGit2::QGitRef> *>     _headers;
+    QList<TreeItem *>     _headers;
+    LibQGit2::QGitRepository _repo;
 
-    void setupTags(const LibQGit2::QGitRepository &repo);
     void setupBranches(const LibQGit2::QGitRepository &repo);
-    void setupRemotes(const LibQGit2::QGitRepository &repo);
 
 };
 

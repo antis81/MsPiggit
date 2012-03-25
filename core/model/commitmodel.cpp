@@ -23,6 +23,8 @@
 #include <src/qgitsignature.h>
 #include <src/qgitrevwalk.h>
 
+#include <model/msptypeinfo.h>
+
 using namespace LibQGit2;
 
 

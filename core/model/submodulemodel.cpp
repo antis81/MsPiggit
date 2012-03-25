@@ -23,6 +23,7 @@
 #include <QtCore/QDir>
 
 #include <model/treeitem.h>
+#include <model/msptypeinfo.h>
 #include <src/qgitrepository.h>
 
 
@@ -37,7 +38,7 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    TreeItem<LibQGit2::QGitRepository> * item = static_cast<TreeItem<LibQGit2::QGitRepository> *>(index.internalPointer());
+    TreeItem * item = static_cast<TreeItem *>(index.internalPointer());
 
     if (role == Qt::DisplayRole)
     {
@@ -45,11 +46,11 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::DecorationRole)
     {
-        return item->icon();
+        return MSPTypeInfo::instance().value(item->type(), "icon");
     }
     else if (role == Qt::ToolTipRole)
     {
-        return item->description();
+        return MSPTypeInfo::instance().value(item->type(), "tooltip");
     }
 //    else if (role == Qt::BackgroundRole)
 //    {
@@ -90,9 +91,9 @@ QModelIndex SubmoduleModel::index(int row, int column, const QModelIndex &parent
     else
     {
         // there is a parent - must be a treeitem
-        TreeItem<LibQGit2::QGitRepository> * parentItem =
-                static_cast<TreeItem<LibQGit2::QGitRepository> *>(parent.internalPointer());
-        TreeItem<LibQGit2::QGitRepository> * childItem = parentItem->children()[row];
+        TreeItem * parentItem =
+                static_cast<TreeItem *>(parent.internalPointer());
+        TreeItem * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);
     }
@@ -105,12 +106,12 @@ QModelIndex SubmoduleModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem<LibQGit2::QGitRepository> *childItem =
-            static_cast<TreeItem<LibQGit2::QGitRepository> *>(index.internalPointer());
+    TreeItem *childItem =
+            static_cast<TreeItem *>(index.internalPointer());
     if (childItem == 0)
         return QModelIndex();
 
-    TreeItem<LibQGit2::QGitRepository> *parentItem = childItem->parent();
+    TreeItem *parentItem = childItem->parent();
     if (parentItem == 0)
         return QModelIndex();
 
@@ -123,7 +124,7 @@ int SubmoduleModel::rowCount(const QModelIndex &parent) const
     if (!parent.isValid())
         return 1;
 
-    return static_cast<TreeItem<LibQGit2::QGitRepository> *>(parent.internalPointer())->children().count();
+    return static_cast<TreeItem *>(parent.internalPointer())->children().count();
 }
 
 int SubmoduleModel::columnCount(const QModelIndex &parent) const
@@ -138,7 +139,9 @@ void SubmoduleModel::initialize(const LibQGit2::QGitRepository &repo)
     beginResetModel();
 
     delete _mainRepoItem;
-    _mainRepoItem = new TreeItem<LibQGit2::QGitRepository>( repo.name() );
+    _mainRepoItem = new TreeItem( "repo" );
+    _mainRepoItem->setAcceptedTypes(QStringList() << "repo");
+    _mainRepoItem->setText( repo.name() );
 
     endResetModel();
 }
