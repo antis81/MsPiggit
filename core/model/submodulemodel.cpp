@@ -23,6 +23,7 @@
 #include <QtCore/QDir>
 
 #include <model/treeitem.h>
+#include <model/msptypeinfo.h>
 #include <src/qgitrepository.h>
 
 
@@ -45,11 +46,11 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::DecorationRole)
     {
-        return item->icon();
+        return MSPTypeInfo::instance().value(item->type(), "icon");
     }
     else if (role == Qt::ToolTipRole)
     {
-        return item->description();
+        return MSPTypeInfo::instance().value(item->type(), "tooltip");
     }
 //    else if (role == Qt::BackgroundRole)
 //    {
@@ -90,7 +91,8 @@ QModelIndex SubmoduleModel::index(int row, int column, const QModelIndex &parent
     else
     {
         // there is a parent - must be a treeitem
-        TreeItem * parentItem = static_cast<TreeItem *>(parent.internalPointer());
+        TreeItem * parentItem =
+                static_cast<TreeItem *>(parent.internalPointer());
         TreeItem * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);
@@ -104,7 +106,8 @@ QModelIndex SubmoduleModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem = static_cast<TreeItem *>(index.internalPointer());
+    TreeItem *childItem =
+            static_cast<TreeItem *>(index.internalPointer());
     if (childItem == 0)
         return QModelIndex();
 
@@ -136,7 +139,9 @@ void SubmoduleModel::initialize(const LibQGit2::QGitRepository &repo)
     beginResetModel();
 
     delete _mainRepoItem;
-    _mainRepoItem = new TreeItem( repo.name() );
+    _mainRepoItem = new TreeItem( "repo" );
+    _mainRepoItem->setAcceptedTypes(QStringList() << "repo");
+    _mainRepoItem->setText( repo.name() );
 
     endResetModel();
 }

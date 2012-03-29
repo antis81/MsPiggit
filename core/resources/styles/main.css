@@ -11,8 +11,17 @@ QWidget#centralWidget, QDockWidget
 QTreeView
 {
     background-color: rgb(221,227,235);
+    alternate-background-color: #000;
     border: 1px black;
-    margin: 0px;
+    selection-color:white;
+    selection-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #669fe1, stop: 1 #1f5fbe);
+    /*show-decoration-selected: 1;*/
+}
+
+QTreeView:!active
+{
+    selection-color:white;
+    selection-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #b0bcdb, stop: 1 #8192bc);
 }
 
 QTreeView#treeRepoRefs

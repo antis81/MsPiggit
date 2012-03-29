@@ -60,6 +60,9 @@ private:
     ReferenceModel  _refModel;          //!< Manages the repos references
     SubmoduleModel  _submoduleModel;    //!< Manages the submodules
 
+    //! @todo _repo is currently used to hold a valid reference to the active repository; find better solution
+    LibQGit2::QGitRepository        _repo; //!< the active repository
+
     /**
       Setup the main menu actions.
 

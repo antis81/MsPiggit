@@ -22,59 +22,51 @@
 
 #include <QtCore/QStringList>
 #include <QtGui/QIcon>
+#include <QtCore/QVariant>
 
 
+
+/**
+  * @brief Data structure holding an item of a hierarchical tree.
+  */
 class TreeItem
 {
 public:
-    explicit TreeItem(const QString &name);
-    virtual ~TreeItem();
+    explicit TreeItem(const QString &type, const QVariant &data = QVariant());
 
-    const QString &acceptedChildTypes() const;
-    void setAcceptedChildTypes(const QString &types);
-
-    QString pathSeparator() const;
-    void setPathSeparator(const QString &sep);
-
-    QString name(bool fullName = false) const;
-    void setName(const QString &name);
-
-    QString text() const;
-    void setText(const QString &text);
-
-    QString description() const;
-    void setDescription(const QString &description);
-
-    QIcon icon() const;
-    void setIcon(const QIcon &icon);
-
-    TreeItem *parent() const;
+    TreeItem * parent() const;
     void setParent(TreeItem *newParent);
-    const QList<TreeItem *> &children() const;
+    const QList<TreeItem *> & children() const;
 
-    virtual TreeItem *appendChild(const QString &path);
+    bool accepts(const QString &type) const;
+    const QStringList & acceptedTypes() const;
+    void setAcceptedTypes(const QStringList &types);
 
-    void removeChild(TreeItem * child);
+    void appendChild(TreeItem *item);
+    TreeItem *findTextItem(const QString &text) const;
+
+    QString type() const;
 
     int row();
-    int indexOf(const QString &name) const;
 
-protected:
-    TreeItem * appendChild(TreeItem * child);
+    /**
+      * @returns a const reference to the data object
+      */
+    const QVariant & data() const;
+
+    virtual QString text() const;
+    void setText(QString text);
 
 private:
     TreeItem *          _parent;
     QList<TreeItem *>   _children;
-    QString             _acceptedChildTypes;
-    QString             _pathSeparator; //!< regular expression string to separate the item into a path structure
 
-    QString     _text;
-    QString     _description;
-    QIcon       _icon;
-    QString     _name; //!< the items name is used as it's id it can be part of a path.
-    //QString     _fullName;
+    QString             _type; //!< a unique type of the TreeItem
+    QStringList         _acceptedTypes; //!< controls accepted types of subitems
 
-    TreeItem *seperatePath(QString name);
+    QString             _text;
+
+    QVariant            _data; //!< the data of the TreeItem
 };
 
 #endif // TREEITEM_H

@@ -23,6 +23,10 @@
 #include <src/qgitsignature.h>
 #include <src/qgitrevwalk.h>
 
+#include <model/msptypeinfo.h>
+
+#include <QtGui/QLinearGradient>
+
 using namespace LibQGit2;
 
 
@@ -47,11 +51,24 @@ QVariant CommitModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
+    QGitCommit * commit = static_cast<QGitCommit *>(index.internalPointer());
+
     if (role == Qt::DisplayRole)
     {
-        QGitCommit * commit = static_cast<QGitCommit *>(index.internalPointer());
-
         return commitData(index.column(), commit);
+    }
+
+    else if (role == Qt::BackgroundRole)
+    {
+        if (commit->oid() == commit->owner().head().oid())
+        {
+            //! @todo Outsource to CommitDelegate
+            QLinearGradient g(0, 0, 0, 30);
+            g.setColorAt(0, QColor(255, 255, 255, 0));
+            g.setColorAt(.5, QColor(255, 181, 79));
+            g.setColorAt(1, QColor(255, 255, 255, 0));
+            return QBrush(g);
+        }
     }
 
     // Request for unhandled data role
@@ -128,6 +145,9 @@ int CommitModel::columnCount(const QModelIndex &parent) const
     return _headers.count();
 }
 
+/**
+  Setup the commit model starting with the HEAD commit.
+  */
 void CommitModel::setHeadCommit(const QGitCommit &commit)
 {
     if (commit.isNull())
@@ -155,6 +175,9 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     endResetModel();
 }
 
+/**
+  Help function to get the commit data.
+  */
 QVariant CommitModel::commitData(int col, const QGitCommit *commit) const
 {
     switch (col)

@@ -26,8 +26,9 @@
 #include <QtCore/QPropertyAnimation>
 #endif // QT_NO_ANIMATION
 
-#include "ui/repowindow.h"
-#include "../libs/qtuiextensions/csplashscreen.h"
+#include <ui/repowindow.h>
+#include <../libs/qtuiextensions/csplashscreen.h>
+#include <model/msptypeinfo.h>
 
 /**
   Shows a splash screen before the program is started.
@@ -70,6 +71,36 @@ void showSplash(QWidget *w, QPixmap &splashPic)
 }
 
 /**
+  Register the basic types known to MsPiggit.
+  */
+void registerBasicTypes()
+{
+    //!< @todo Outsource to some central place like main window or such
+    MSPTypeInfo::instance().registerType("__HEADER__", "^(__HEADER_)");
+    MSPTypeInfo::instance().registerType("__HEADER_BRANCHES__");
+    MSPTypeInfo::instance().addField("__HEADER_BRANCHES__", "icon", QIcon(":/icons/branch.png"));
+    MSPTypeInfo::instance().addField("__HEADER_BRANCHES__", "tooltip", QObject::tr("The active repositories branches."));
+
+    MSPTypeInfo::instance().registerType("__HEADER_REMOTES__");
+    MSPTypeInfo::instance().addField("__HEADER_REMOTES__", "icon", QIcon(":/icons/remote.png"));
+    MSPTypeInfo::instance().addField("__HEADER_REMOTES__", "tooltip", QObject::tr("The active repositories remote references."));
+
+    MSPTypeInfo::instance().registerType("__HEADER_TAGS__");
+    MSPTypeInfo::instance().addField("__HEADER_TAGS__", "icon", QIcon(":/icons/tag.png"));
+    MSPTypeInfo::instance().addField("__HEADER_TAGS__", "tooltip", QObject::tr("The active repositories version tags."));
+
+    MSPTypeInfo::instance().registerType("__FOLDER__");
+    MSPTypeInfo::instance().addField("__FOLDER__", "icon", QIcon(":/icons/folder.png"));
+
+    MSPTypeInfo::instance().registerType("repo");
+    MSPTypeInfo::instance().addField("repo", "icon", QIcon(":/icons/repo.png"));
+
+    MSPTypeInfo::instance().registerType("ref_branch", "^(refs/heads/)");
+    MSPTypeInfo::instance().registerType("ref_remote", "^(refs/remotes/)");
+    MSPTypeInfo::instance().registerType("ref_tag", "^(refs/tags/)");
+}
+
+/**
   Main function of MsPiggit.
   */
 int main(int argc, char *argv[])
@@ -80,6 +111,8 @@ int main(int argc, char *argv[])
     QFile f(":/styles/main.css");
     if (f.open(QIODevice::ReadOnly))
         a.setStyleSheet(f.readAll());
+
+    registerBasicTypes();
 
     RepoWindow w;
 

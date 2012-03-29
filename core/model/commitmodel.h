@@ -60,7 +60,7 @@ public:
 
 private:
     QList<LibQGit2::QGitCommit>     _commits; //!< ordered list of commits.
-    QStringList                     _headers;
+    QStringList                     _headers; //!< column headers
 
     /**
       Helper function to retreive the correct text for the column specified by the model index.
