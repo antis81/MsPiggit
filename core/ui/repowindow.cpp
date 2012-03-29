@@ -85,11 +85,10 @@ void RepoWindow::setupRepoView(QString path)
         return;
 
     // open git repository and initialize views
-    QGitRepository repo;
     try
     {
-        repo.discoverAndOpen(path);
-        updateWindowTitle( repo );
+        _repo.discoverAndOpen(path);
+        updateWindowTitle( _repo );
     }
     catch (LibQGit2::QGitException e)
     {
@@ -98,9 +97,9 @@ void RepoWindow::setupRepoView(QString path)
     }
 
     // setup the views
-    initCommitHistory(repo);
-    initReferences(repo);
-    initSubmodules(repo);
+    initCommitHistory(_repo);
+    initReferences(_repo);
+    initSubmodules(_repo);
 }
 
 void RepoWindow::updateWindowTitle(const QGitRepository &repo)

@@ -59,9 +59,9 @@ QVariant ReferenceModel::data(const QModelIndex &index, int role) const
         if ( item->data().canConvert<LibQGit2::QGitRef>() )
         {
             const LibQGit2::QGitRef & ref = item->data().value<LibQGit2::QGitRef>();
-            if ( _repo.head().oid() == ref.oid() )
+            if ( ref.owner().head().oid() == ref.oid() )
             {
-                return QColor(0xFF, 0x85, 0x00, 0xFF);
+                return QColor(255, 181, 79);
             }
         }
     }
@@ -178,7 +178,6 @@ void ReferenceModel::setupRefs(const LibQGit2::QGitRepository &repo)
 
 void ReferenceModel::setupBranches(const LibQGit2::QGitRepository &repo)
 {
-    _repo = repo;
     QStringList refs = repo.listReferences();
     while (!refs.isEmpty())
     {

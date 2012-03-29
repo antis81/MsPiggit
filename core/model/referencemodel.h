@@ -54,7 +54,6 @@ public:
 
 private:
     QList<TreeItem *>     _headers;
-    LibQGit2::QGitRepository _repo;
 
     void setupBranches(const LibQGit2::QGitRepository &repo);
 
