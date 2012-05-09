@@ -27,6 +27,7 @@ class TreeItem;
 namespace LibQGit2
 {
     class QGitRepository;
+    class QGitTree;
 }
 
 class SubmoduleModel : public QAbstractItemModel
@@ -53,6 +54,11 @@ public:
 private:
     TreeItem *      _mainRepoItem;
 
+    /**
+      * Reads all submodules recursive.
+      */
+    void parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo);
+    bool openSubrepo(LibQGit2::QGitRepository &outRepo, const QString &path);
 };
 
 #endif // SUBMODULEMODEL_H

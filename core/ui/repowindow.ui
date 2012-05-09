@@ -121,6 +121,12 @@
      </property>
      <item row="0" column="0">
       <widget class="QTreeView" name="treeSubmodules">
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="animated">
         <bool>true</bool>
        </property>

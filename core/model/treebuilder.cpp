@@ -18,9 +18,11 @@ TreeBuilder &TreeBuilder::instance()
     return *_instance;
 }
 
-void TreeBuilder::insertItem(TreeItem *item, TreeItem *startItem, QString path, const QString &filter, const QString &sep)
+void TreeBuilder::insertItem(TreeItem *item, TreeItem *startItem, QString path, const QString &exclude, const QString &sep)
 {
-    path.remove(QRegExp(filter));
+    if (!exclude.isEmpty())
+        path.remove(QRegExp(exclude));
+
     QStringList subPaths = path.split(QRegExp(sep));
 
     if (subPaths.isEmpty())

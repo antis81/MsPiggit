@@ -93,7 +93,9 @@ void registerBasicTypes()
     MSPTypeInfo::instance().addField("__FOLDER__", "icon", QIcon(":/icons/folder.png"));
 
     MSPTypeInfo::instance().registerType("repo");
-    MSPTypeInfo::instance().addField("repo", "icon", QIcon(":/icons/repo.png"));
+    MSPTypeInfo::instance().addField("repo", "icon", QIcon(":/icons/repo.svg"));
+    MSPTypeInfo::instance().registerType("subrepo");
+    MSPTypeInfo::instance().addField("subrepo", "icon", QIcon(":/icons/subrepo.svg"));
 
     MSPTypeInfo::instance().registerType("ref_branch", "^(refs/heads/)");
     MSPTypeInfo::instance().registerType("ref_remote", "^(refs/remotes/)");

@@ -136,11 +136,13 @@ QModelIndex CommitModel::parent(const QModelIndex &index) const
 
 int CommitModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return _commits.count();
 }
 
 int CommitModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     //! @todo Return the selected header count for commits.
     return _headers.count();
 }

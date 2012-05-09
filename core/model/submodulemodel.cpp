@@ -21,10 +21,18 @@
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
+#include <QtCore/QUrl>
 
 #include <model/treeitem.h>
 #include <model/msptypeinfo.h>
+#include <model/treebuilder.h>
+
 #include <src/qgitrepository.h>
+#include <src/qgitsubmodule.h>
+#include <src/qgitexception.h>
+
+
+Q_DECLARE_METATYPE( LibQGit2::QGitSubmodule )
 
 
 SubmoduleModel::SubmoduleModel(QObject *parent)
@@ -50,7 +58,14 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::ToolTipRole)
     {
-        return MSPTypeInfo::instance().value(item->type(), "tooltip");
+        if ( item->data().canConvert<LibQGit2::QGitSubmodule>() )
+        {
+            const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
+            return "name: " + submodule.getName() + "\n"
+                    + "url: " + submodule.getUrl().toString() + "\n"
+                    + "commit: " + QString(submodule.getOid().format())
+                    ;
+        }
     }
 //    else if (role == Qt::BackgroundRole)
 //    {
@@ -91,8 +106,7 @@ QModelIndex SubmoduleModel::index(int row, int column, const QModelIndex &parent
     else
     {
         // there is a parent - must be a treeitem
-        TreeItem * parentItem =
-                static_cast<TreeItem *>(parent.internalPointer());
+        TreeItem * parentItem = static_cast<TreeItem *>(parent.internalPointer());
         TreeItem * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);
@@ -140,8 +154,42 @@ void SubmoduleModel::initialize(const LibQGit2::QGitRepository &repo)
 
     delete _mainRepoItem;
     _mainRepoItem = new TreeItem( "repo" );
-    _mainRepoItem->setAcceptedTypes(QStringList() << "repo");
+    _mainRepoItem->setAcceptedTypes(QStringList() << "subrepo");
     _mainRepoItem->setText( repo.name() );
 
+    parseSubmodules(_mainRepoItem, repo);
+
     endResetModel();
+}
+
+void SubmoduleModel::parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo)
+{
+    using namespace LibQGit2;
+
+    foreach (const QGitSubmodule &submodule, repo.listSubmodules())
+    {
+        TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(submodule));
+        TreeBuilder::instance().insertItem(submoduleItem, parentItem, submodule.getPath());
+
+        // recurse into submodules
+        QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.getPath()) );
+        QGitRepository submoduleRepo;
+        if (openSubrepo(submoduleRepo, submodulePath))
+            parseSubmodules(submoduleItem, submoduleRepo);
+    }
+}
+
+bool SubmoduleModel::openSubrepo(LibQGit2::QGitRepository &outRepo, const QString &path)
+{
+    bool result = true;
+    try
+    {
+        outRepo.discoverAndOpen(path, false, QStringList() << path);
+    }
+    catch (LibQGit2::QGitException &)
+    {
+        result = false;
+    }
+
+    return result;
 }
