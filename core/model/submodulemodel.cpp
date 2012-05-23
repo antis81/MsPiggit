@@ -61,9 +61,9 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
         if ( item->data().canConvert<LibQGit2::QGitSubmodule>() )
         {
             const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
-            return "name: " + submodule.getName() + "\n"
-                    + "url: " + submodule.getUrl().toString() + "\n"
-                    + "commit: " + QString(submodule.getOid().format())
+            return "name: " + submodule.name() + "\n"
+                    + "url: " + submodule.url().toString() + "\n"
+                    + "commit: " + QString(submodule.oid().format())
                     ;
         }
     }
@@ -169,10 +169,10 @@ void SubmoduleModel::parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitR
     foreach (const QGitSubmodule &submodule, repo.listSubmodules())
     {
         TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(submodule));
-        TreeBuilder::instance().insertItem(submoduleItem, parentItem, submodule.getPath());
+        TreeBuilder::instance().insertItem(submoduleItem, parentItem, submodule.path());
 
         // recurse into submodules
-        QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.getPath()) );
+        QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.path()) );
         QGitRepository submoduleRepo;
         if (openSubrepo(submoduleRepo, submodulePath))
             parseSubmodules(submoduleItem, submoduleRepo);
