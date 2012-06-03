@@ -74,7 +74,7 @@ void RepoWindow::setupMainMenu()
 
 void RepoWindow::openRepository()
 {
-    QFileDialog fd;
+    QFileDialog fd(this);
     fd.setFilter(QDir::AllDirs | QDir::Hidden);
     fd.setDirectory(QDir::home());
     fd.setWindowTitle( tr("Open a Repository") );
