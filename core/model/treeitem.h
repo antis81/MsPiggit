@@ -52,7 +52,7 @@ public:
     /**
       * @returns a const reference to the data object
       */
-    const QVariant & data() const;
+    const QVariant &data() const;
 
     virtual QString text() const;
     void setText(QString text);

@@ -105,10 +105,8 @@ QModelIndex ReferenceModel::index(int row, int column, const QModelIndex &parent
     }
     else
     {
-        TreeItem * parentItem;
-        parentItem = static_cast<TreeItem *>(parent.internalPointer());
-
         // there is a parent - must be a treeitem
+        TreeItem * parentItem = static_cast<TreeItem *>(parent.internalPointer());
         TreeItem * childItem = parentItem->children()[row];
         if (childItem != 0)
             return createIndex(row, column, childItem);

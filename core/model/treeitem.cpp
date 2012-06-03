@@ -17,13 +17,6 @@ TreeItem *TreeItem::parent() const
 
 void TreeItem::setParent(TreeItem *newParent)
 {
-    // reparent item when parent was set
-//    if (_parent != newParent)
-//    {
-//        _parent->removeChild(this);
-//        _parent->appendChild(this);
-//    }
-
     _parent = newParent;
 }
 
@@ -91,7 +84,7 @@ int TreeItem::row()
     return _parent->children().indexOf(this);
 }
 
-const QVariant & TreeItem::data() const
+const QVariant &TreeItem::data() const
 {
     return _data;
 }
