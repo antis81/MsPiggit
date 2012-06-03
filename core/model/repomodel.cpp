@@ -17,7 +17,7 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "submodulemodel.h"
+#include "repomodel.h"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
@@ -32,16 +32,18 @@
 #include <src/qgitexception.h>
 
 
+// QVariant declarations
+Q_DECLARE_METATYPE( LibQGit2::QGitRepository )
 Q_DECLARE_METATYPE( LibQGit2::QGitSubmodule )
 
 
-SubmoduleModel::SubmoduleModel(QObject *parent)
+RepoModel::RepoModel(QObject *parent)
     : QAbstractItemModel(parent)
     , _mainRepoItem(0)
 {
 }
 
-QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
+QVariant RepoModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -50,7 +52,14 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole)
     {
-        return item->text();
+        if ( !item->data().canConvert<LibQGit2::QGitSubmodule>() )
+            return item->text();
+
+        const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
+        return QString("%1\n(%2)")
+                .arg(item->text())
+                .arg(QString(submodule.oid().format()))
+                ;
     }
     else if (role == Qt::DecorationRole)
     {
@@ -58,14 +67,14 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::ToolTipRole)
     {
-        if ( item->data().canConvert<LibQGit2::QGitSubmodule>() )
-        {
-            const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
-            return "name: " + submodule.name() + "\n"
-                    + "url: " + submodule.url().toString() + "\n"
-                    + "commit: " + QString(submodule.oid().format())
-                    ;
-        }
+        if ( !item->data().canConvert<LibQGit2::QGitSubmodule>() )
+            return QVariant();
+
+        const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
+        return QString("name: %1\nurl: %2")
+                .arg(submodule.name())
+                .arg(submodule.url().toString())
+                ;
     }
 //    else if (role == Qt::BackgroundRole)
 //    {
@@ -75,14 +84,14 @@ QVariant SubmoduleModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-Qt::ItemFlags SubmoduleModel::flags(const QModelIndex &index) const
+Qt::ItemFlags RepoModel::flags(const QModelIndex &index) const
 {
     Q_UNUSED(index);
 
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-QVariant SubmoduleModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RepoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (section != 0)
         return QVariant();
@@ -93,7 +102,7 @@ QVariant SubmoduleModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-QModelIndex SubmoduleModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex RepoModel::index(int row, int column, const QModelIndex &parent) const
 {
     if ( !hasIndex(row, column, parent) )
         return QModelIndex();
@@ -115,13 +124,12 @@ QModelIndex SubmoduleModel::index(int row, int column, const QModelIndex &parent
     return QModelIndex();
 }
 
-QModelIndex SubmoduleModel::parent(const QModelIndex &index) const
+QModelIndex RepoModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem =
-            static_cast<TreeItem *>(index.internalPointer());
+    TreeItem *childItem = static_cast<TreeItem *>(index.internalPointer());
     if (childItem == 0)
         return QModelIndex();
 
@@ -133,7 +141,7 @@ QModelIndex SubmoduleModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int SubmoduleModel::rowCount(const QModelIndex &parent) const
+int RepoModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
         return 1;
@@ -141,19 +149,19 @@ int SubmoduleModel::rowCount(const QModelIndex &parent) const
     return static_cast<TreeItem *>(parent.internalPointer())->children().count();
 }
 
-int SubmoduleModel::columnCount(const QModelIndex &parent) const
+int RepoModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
     return 1;
 }
 
-void SubmoduleModel::initialize(const LibQGit2::QGitRepository &repo)
+void RepoModel::initialize(const LibQGit2::QGitRepository &repo)
 {
     beginResetModel();
 
-    delete _mainRepoItem;
-    _mainRepoItem = new TreeItem( "repo" );
+    delete _mainRepoItem; // delete a previous set TreeItem
+    _mainRepoItem = new TreeItem( "repo", QVariant::fromValue(repo) );
     _mainRepoItem->setAcceptedTypes(QStringList() << "subrepo");
     _mainRepoItem->setText( repo.name() );
 
@@ -162,34 +170,19 @@ void SubmoduleModel::initialize(const LibQGit2::QGitRepository &repo)
     endResetModel();
 }
 
-void SubmoduleModel::parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo)
+void RepoModel::parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo)
 {
     using namespace LibQGit2;
 
-    foreach (const QGitSubmodule &submodule, repo.listSubmodules())
+    foreach (QGitSubmodule submodule, QGitSubmodule::list(repo))
     {
-        TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(submodule));
+        TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(QGitSubmodule(submodule)));
         TreeBuilder::instance().insertItem(submoduleItem, parentItem, submodule.path());
 
         // recurse into submodules
-        QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.path()) );
-        QGitRepository submoduleRepo;
-        if (openSubrepo(submoduleRepo, submodulePath))
+        //QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.path()) );
+        const QGitRepository & submoduleRepo = submodule.repository();
+        if ( submodule.open() && !submoduleRepo.isEmpty() )
             parseSubmodules(submoduleItem, submoduleRepo);
     }
-}
-
-bool SubmoduleModel::openSubrepo(LibQGit2::QGitRepository &outRepo, const QString &path)
-{
-    bool result = true;
-    try
-    {
-        outRepo.discoverAndOpen(path, false, QStringList() << path);
-    }
-    catch (LibQGit2::QGitException &)
-    {
-        result = false;
-    }
-
-    return result;
 }

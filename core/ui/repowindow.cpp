@@ -30,7 +30,6 @@
 
 #include <model/commitmodel.h>
 #include <model/referencemodel.h>
-#include <model/submodulemodel.h>
 
 #include <ui/refdelegate.h>
 

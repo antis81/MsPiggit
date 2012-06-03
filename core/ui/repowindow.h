@@ -24,7 +24,7 @@
 
 #include <model/commitmodel.h>
 #include <model/referencemodel.h>
-#include <model/submodulemodel.h>
+#include <model/repomodel.h>
 
 namespace LibQGit2
 {
@@ -58,7 +58,7 @@ private:
 
     CommitModel     _commitModel;       //!< Manages the commit history.
     ReferenceModel  _refModel;          //!< Manages the repos references
-    SubmoduleModel  _submoduleModel;    //!< Manages the submodules
+    RepoModel       _submoduleModel;    //!< Manages the submodules
 
     //! @todo _repo is currently used to hold a valid reference to the active repository; find better solution
     LibQGit2::QGitRepository        _repo; //!< the active repository

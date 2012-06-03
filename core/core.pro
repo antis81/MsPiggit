@@ -34,21 +34,21 @@ SOURCES += \
     ui/repowindow.cpp \
     model/commitmodel.cpp \
     model/referencemodel.cpp \
-    model/submodulemodel.cpp \
     model/msptypeinfo.cpp \
     model/treeitem.cpp \
     model/treebuilder.cpp \
-    ui/refdelegate.cpp
+    ui/refdelegate.cpp \
+    model/repomodel.cpp
 
 HEADERS  += \
     ui/repowindow.h \
     model/commitmodel.h \
     model/referencemodel.h \
-    model/submodulemodel.h \
     model/treeitem.h \
     model/msptypeinfo.h \
     model/treebuilder.h \
-    ui/refdelegate.h
+    ui/refdelegate.h \
+    model/repomodel.h
 
 FORMS    += \
     ui/repowindow.ui
