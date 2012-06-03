@@ -17,8 +17,8 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SUBMODULEMODEL_H
-#define SUBMODULEMODEL_H
+#ifndef REPOMODEL_H
+#define REPOMODEL_H
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QSharedPointer>
@@ -59,7 +59,6 @@ private:
       * Reads all submodules recursive.
       */
     void parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo);
-//    bool openSubrepo(LibQGit2::QGitRepository &outRepo, const QString &path);
 };
 
-#endif // SUBMODULEMODEL_H
+#endif // REPOMODEL_H
