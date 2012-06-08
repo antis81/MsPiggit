@@ -86,7 +86,7 @@ Qt::ItemFlags CommitModel::flags(const QModelIndex &index) const
 QVariant CommitModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if ( (orientation == Qt::Horizontal) && (role == Qt::DisplayRole)
-        &&  (_headers.count() > section) )
+         &&  (_headers.count() > section) )
     {
         return _headers[section];
     }
@@ -152,20 +152,27 @@ int CommitModel::columnCount(const QModelIndex &parent) const
   */
 void CommitModel::setHeadCommit(const QGitCommit &commit)
 {
-    if (commit.isNull())
-        return;
-
     beginResetModel();
 
     _commits.clear();
 
+    if (!commit.isNull())
+        walkCommits(commit);
+
     //! @todo Read all commits using lazy loading. Cache is required for large repositories!
 
+    endResetModel();
+
+    emit initialized();
+}
+
+void CommitModel::walkCommits(const QGitCommit &head)
+{
     // read all commits from _headCommit downwards
-    QGitRevWalk walker(commit.owner());
+    QGitRevWalk walker(head.owner());
     walker.setSorting(QGitRevWalk::Topological | QGitRevWalk::Time);
 
-    walker.push(commit); // initialize the walker
+    walker.push(head); // initialize the walker
 
     // walk revisions
     QGitCommit c;
@@ -173,8 +180,6 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     {
         _commits.append(c);
     }
-
-    endResetModel();
 }
 
 /**

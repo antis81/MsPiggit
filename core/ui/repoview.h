@@ -17,18 +17,32 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REFDELEGATE_H
-#define REFDELEGATE_H
+#ifndef REPOVIEW_H
+#define REPOVIEW_H
 
-#include <QtGui/QStyledItemDelegate>
+#include <QtGui/QWidget>
 
-class RefDelegate : public QStyledItemDelegate
+
+namespace Ui
+{
+    class RepoView;
+}
+
+namespace LibQGit2
+{
+    class QGitRepository;
+}
+
+class RepoView : public QWidget
 {
     Q_OBJECT
-public:
-    explicit RefDelegate(QObject *parent = 0);
     
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+public:
+    explicit RepoView(QWidget *parent = 0);
+    ~RepoView();
+
+private:
+    Ui::RepoView *  ui;
 };
 
-#endif // REFDELEGATE_H
+#endif // REPOVIEW_H

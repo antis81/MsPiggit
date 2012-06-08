@@ -36,6 +36,9 @@ namespace Ui
     class RepoWindow;
 }
 
+class RepoView;
+
+
 /**
 This is the main window to display a repositories content and dependencies.
 */
@@ -48,20 +51,14 @@ public:
     ~RepoWindow();
 
 private slots:
-    /**
-      Open a repository.
-      */
     void openRepository();
+    void initializeRepoStatus();
 
 private:
-    Ui::RepoWindow *ui;
+    Ui::RepoWindow *    ui;
 
-    CommitModel     _commitModel;       //!< Manages the commit history.
-    ReferenceModel  _refModel;          //!< Manages the repos references
-    RepoModel       _submoduleModel;    //!< Manages the submodules
-
-    //! @todo _repo is currently used to hold a valid reference to the active repository; find better solution
-    LibQGit2::QGitRepository        _repo; //!< the active repository
+    RepoView *          _repoView;  //!< pointer to the central widget
+    RepoModel           _repoModel; //!< Manages the submodules
 
     /**
       Setup the main menu actions.

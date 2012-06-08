@@ -25,10 +25,6 @@
 
 #include <src/qgitcommit.h>
 
-//namespace LibQGit2
-//{
-//    class QGitCommit;
-//}
 
 /**
   @brief Represents a commit history model. Currently Git only, but support for other VCS is planned for the future.
@@ -58,9 +54,17 @@ public:
       */
     void setHeadCommit(const LibQGit2::QGitCommit &commit);
 
+signals:
+    void initialized();
+
 private:
     QList<LibQGit2::QGitCommit>     _commits; //!< ordered list of commits.
     QStringList                     _headers; //!< column headers
+
+    /**
+      Walks the commit history.
+      */
+    void walkCommits(const LibQGit2::QGitCommit &head);
 
     /**
       Helper function to retreive the correct text for the column specified by the model index.

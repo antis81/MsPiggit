@@ -17,18 +17,19 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REFDELEGATE_H
-#define REFDELEGATE_H
+#ifndef REPODELEGATE_H
+#define REPODELEGATE_H
 
 #include <QtGui/QStyledItemDelegate>
 
-class RefDelegate : public QStyledItemDelegate
+class RepoDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit RefDelegate(QObject *parent = 0);
+    explicit RepoDelegate(QObject *parent = 0);
     
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+protected:
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 };
 
-#endif // REFDELEGATE_H
+#endif // REPODELEGATE_H

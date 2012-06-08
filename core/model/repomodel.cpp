@@ -19,6 +19,8 @@
 
 #include "repomodel.h"
 
+#include <metatypes.h>
+
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
 #include <QtCore/QUrl>
@@ -30,11 +32,6 @@
 #include <src/qgitrepository.h>
 #include <src/qgitsubmodule.h>
 #include <src/qgitexception.h>
-
-
-// QVariant declarations
-Q_DECLARE_METATYPE( LibQGit2::QGitRepository )
-Q_DECLARE_METATYPE( LibQGit2::QGitSubmodule )
 
 
 RepoModel::RepoModel(QObject *parent)

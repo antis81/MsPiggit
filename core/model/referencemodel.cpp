@@ -19,16 +19,13 @@
 
 #include "referencemodel.h"
 
-#include <src/qgitrepository.h>
+#include <metatypes.h>
+
 #include <model/treeitem.h>
 #include <model/treebuilder.h>
 #include <model/msptypeinfo.h>
 
 #include <QtGui/QLinearGradient>
-
-
-Q_DECLARE_METATYPE( LibQGit2::QGitRef )
-
 
 ReferenceModel::ReferenceModel(QObject *parent)
     : QAbstractItemModel(parent)

@@ -38,7 +38,10 @@ SOURCES += \
     model/treeitem.cpp \
     model/treebuilder.cpp \
     ui/refdelegate.cpp \
-    model/repomodel.cpp
+    model/repomodel.cpp \
+    ui/repoview.cpp \
+    ui/repodelegate.cpp \
+    model/modelaccess.cpp
 
 HEADERS  += \
     ui/repowindow.h \
@@ -48,10 +51,16 @@ HEADERS  += \
     model/msptypeinfo.h \
     model/treebuilder.h \
     ui/refdelegate.h \
-    model/repomodel.h
+    ui/submoduledelegate.h \
+    model/repomodel.h \
+    ui/repoview.h \
+    ui/repodelegate.h \
+    model/modelaccess.h \
+    metatypes.h
 
 FORMS    += \
-    ui/repowindow.ui
+    ui/repowindow.ui \
+    ui/repoview.ui
 
 RESOURCES += \
     resources/MsPiggitResources.qrc
