@@ -25,29 +25,14 @@ ModelAccess &ModelAccess::instance()
 
 bool ModelAccess::reinitialize(const LibQGit2::QGitRepository &repo)
 {
-    using namespace LibQGit2;
-
     if (repo.isNull())
         return false;
 
     // initialize reference model
     _refModel->setupRefs(repo);
 
-    //! @todo Initialize with every branches head commit, not just HEAD (!!)
-    // Lookup the current repository HEAD
-    QGitCommit headCommit;
-    if (!repo.isEmpty())
-    {
-        const QGitRef headRef = repo.head();
-
-        if (headRef.isNull())
-            return false;
-
-        headCommit = repo.lookupCommit(headRef.oid());
-    }
-
-    // lookup the HEAD commit and reinitialize the model
-    _commitModel->setHeadCommit( headCommit );
+    // initialize the commit model
+    _commitModel->initialize( repo );
 
     return true;
 }

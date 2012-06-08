@@ -52,7 +52,7 @@ public:
     /**
       Sets the commit pointing to HEAD. This is the 'root'.
       */
-    void setHeadCommit(const LibQGit2::QGitCommit &commit);
+    void initialize(const LibQGit2::QGitRepository &repo);
 
 signals:
     void initialized();
@@ -64,7 +64,7 @@ private:
     /**
       Walks the commit history.
       */
-    void walkCommits(const LibQGit2::QGitCommit &head);
+    void walkCommits(const LibQGit2::QGitRepository &repo);
 
     /**
       Helper function to retreive the correct text for the column specified by the model index.
