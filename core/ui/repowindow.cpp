@@ -137,8 +137,3 @@ bool RepoWindow::checkDirExists(const QString &path) const
 
     return true;
 }
-
-void RepoWindow::initSubmodules(const LibQGit2::QGitRepository &repo)
-{
-    _repoModel.initialize(repo);
-}

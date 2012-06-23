@@ -80,24 +80,6 @@ private:
     bool checkDirExists(const QString &path) const;
 
     /**
-      Initializes the commit history view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initCommitHistory(const LibQGit2::QGitRepository &repo);
-
-    /**
-      Initializes the references (branches, tags, remotes) view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initReferences(const LibQGit2::QGitRepository &repo);
-
-    /**
-      Initializes the submodule view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initSubmodules(const LibQGit2::QGitRepository &repo);
-
-    /**
       Show the repository name in the window title.
       */
     void updateWindowTitle(const LibQGit2::QGitRepository &repo);

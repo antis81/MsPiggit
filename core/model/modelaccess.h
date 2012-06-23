@@ -21,9 +21,6 @@ public:
     const ReferenceModel &refModel();
     ReferenceModel *refModelPtr();
 
-//    void initCommitModel(const LibQGit2::QGitRepository &repo);
-//    void initRefModel(const LibQGit2::QGitRepository &repo);
-
 private:
     static ModelAccess *        _instance;
 
