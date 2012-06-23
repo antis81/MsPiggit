@@ -22,8 +22,8 @@
 
 #include <QAbstractItemModel>
 
-#include <src/qgitref.h>
-#include <src/qgitrepository.h>
+#include <QGit2/QGitRef>
+#include <QGit2/QGitRepository>
 
 class TreeItem;
 

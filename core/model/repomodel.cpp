@@ -29,9 +29,8 @@
 #include <model/msptypeinfo.h>
 #include <model/treebuilder.h>
 
-#include <src/qgitrepository.h>
-#include <src/qgitsubmodule.h>
-#include <src/qgitexception.h>
+#include <QGit2/QGitRepository>
+#include <QGit2/QGitSubmodule>
 
 
 RepoModel::RepoModel(QObject *parent)

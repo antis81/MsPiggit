@@ -23,7 +23,7 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStringList>
 
-#include <src/qgitcommit.h>
+#include <QGit2/QGitCommit>
 
 
 /**

@@ -12,8 +12,8 @@ TARGET = MsPiggit
 TEMPLATE = app
 DESTDIR = $$BIN_BASE
 
-INCLUDEPATH += . ../libs ../libs/libqgit2 ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
-#DEPENDPATH += $$PWD/../libs/libqgit2
+INCLUDEPATH += . ../libs/libqgit2 ../libs/libqgit2/include \
+            ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
 
 win32-msvc: LIBEXT=lib
 else: LIBEXT=a

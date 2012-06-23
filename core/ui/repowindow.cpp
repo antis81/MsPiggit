@@ -24,8 +24,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QLabel>
 
-//#include <src/qgitrepository.h>
-#include <src/qgitexception.h>
+#include <QGit2/QGitError>
 
 #include <model/modelaccess.h>
 
@@ -94,28 +93,36 @@ void RepoWindow::setupRepoView(QString path)
     QGitRepository repo;
 
     // open git repository and initialize views
-    try
+    if ( !repo.discoverAndOpen(path) )
     {
-        repo.discoverAndOpen(path);
-        updateWindowTitle( repo );
-    }
-    catch (LibQGit2::QGitException e)
-    {
-        QMessageBox::critical( this, tr("Unable to open repository."), e.message() );
-        return;
+        QMessageBox::critical( this, tr("Unable to open repository.")
+                               , QString("Unable to open repository:\n%2").arg(QGitError::lastMessage())
+                               );
     }
 
+    updateWindowTitle( repo );
+
     // setup the models
-    initSubmodules(repo);
-    ModelAccess::instance().reinitialize(repo);
+    _repoModel.initialize( repo );
+    ModelAccess::instance().reinitialize( repo );
 }
 
 void RepoWindow::updateWindowTitle(const LibQGit2::QGitRepository &repo)
 {
-    QString title = "Repository: " + repo.name();
-    if ( repo.isBare() )
-        title += QString(" (BARE)");
-    setWindowTitle(title);
+
+    QString repoText;
+    if (repo.isNull())
+    {
+        repoText = tr("<< no repository >>");
+    }
+    else
+    {
+        repoText = repo.name();
+        if (repo.isBare())
+            repoText += QString(" (BARE)");
+    }
+
+    setWindowTitle( QString("Repository: %1").arg(repoText) );
 }
 
 bool RepoWindow::checkDirExists(const QString &path) const

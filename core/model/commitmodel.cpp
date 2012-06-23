@@ -19,9 +19,9 @@
 
 #include "commitmodel.h"
 
-#include <src/qgitrepository.h>
-#include <src/qgitsignature.h>
-#include <src/qgitrevwalk.h>
+#include <QGit2/QGitRepository>
+#include <QGit2/QGitSignature>
+#include <QGit2/QGitRevWalk>
 
 #include <model/msptypeinfo.h>
 
