@@ -175,6 +175,9 @@ void ReferenceModel::setupRefs(const LibQGit2::QGitRepository &repo)
 
 void ReferenceModel::setupBranches(const LibQGit2::QGitRepository &repo)
 {
+    if (repo.isNull())
+        return;
+
     QStringList refs = repo.listReferences();
     while (!refs.isEmpty())
     {

@@ -27,6 +27,8 @@
 #include <QtCore/QEvent>
 #include <QtGui/QMessageBox>
 
+#include <QGit2/QGitError>
+
 
 RepoDelegate::RepoDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -39,8 +41,11 @@ bool RepoDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const Q
 
     TreeItem *item = static_cast<TreeItem*>( index.internalPointer() );
 
-    if (event->type() == QEvent::MouseButtonDblClick)
+    if ( event->type() == QEvent::MouseButtonDblClick
+         )
     {
+        event->accept();
+
         if (item->type() == "repo")
         {
             ModelAccess::instance().reinitialize( item->data().value<QGitRepository>() );
@@ -48,8 +53,13 @@ bool RepoDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const Q
 
         else if (item->type() == "subrepo")
         {
-            QGitRepository repo = item->data().value<QGitSubmodule>().repository();
-            ModelAccess::instance().reinitialize( repo );
+            const QGitSubmodule &submodule = item->data().value<QGitSubmodule>();
+            if ( !ModelAccess::instance().reinitialize(submodule.repository()) )
+            {
+                QMessageBox::warning( 0, tr("Cannot display repository.")
+                                      , tr("Cannot display repository:\n%1").arg(QGitError::lastMessage())
+                                      );
+            }
         }
 
         return true;

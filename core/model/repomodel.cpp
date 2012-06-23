@@ -157,11 +157,15 @@ void RepoModel::initialize(const LibQGit2::QGitRepository &repo)
     beginResetModel();
 
     delete _mainRepoItem; // delete a previous set TreeItem
-    _mainRepoItem = new TreeItem( "repo", QVariant::fromValue(repo) );
-    _mainRepoItem->setAcceptedTypes(QStringList() << "subrepo");
-    _mainRepoItem->setText( repo.name() );
 
-    parseSubmodules(_mainRepoItem, repo);
+    if ( !repo.isNull() )
+    {
+        _mainRepoItem = new TreeItem( "repo", QVariant::fromValue(repo) );
+        _mainRepoItem->setAcceptedTypes(QStringList() << "subrepo");
+        _mainRepoItem->setText( repo.name() );
+
+        parseSubmodules(_mainRepoItem, repo);
+    }
 
     endResetModel();
 }
@@ -170,15 +174,14 @@ void RepoModel::parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitReposi
 {
     using namespace LibQGit2;
 
-    foreach (QGitSubmodule submodule, QGitSubmodule::list(repo))
+    foreach (const QGitSubmodule &submodule, QGitSubmodule::list(repo))
     {
-        TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(QGitSubmodule(submodule)));
+        TreeItem *submoduleItem = new TreeItem("subrepo", QVariant::fromValue(submodule));
         TreeBuilder::instance().insertItem(submoduleItem, parentItem, submodule.path());
 
         // recurse into submodules
-        //QString submodulePath = QDir::cleanPath( QString("%1/%2").arg(repo.workDirPath()).arg(submodule.path()) );
         const QGitRepository & submoduleRepo = submodule.repository();
-        if ( submodule.open() && !submoduleRepo.isEmpty() )
+        if ( !submoduleRepo.isNull() && !submoduleRepo.isEmpty() )
             parseSubmodules(submoduleItem, submoduleRepo);
     }
 }
