@@ -48,14 +48,7 @@ QVariant RepoModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole)
     {
-        if ( !item->data().canConvert<LibQGit2::QGitSubmodule>() )
-            return item->text();
-
-        const LibQGit2::QGitSubmodule &submodule = item->data().value<LibQGit2::QGitSubmodule>();
-        return QString("%1\n(%2)")
-                .arg(item->text())
-                .arg(QString(submodule.oid().format()))
-                ;
+        return item->text();
     }
     else if (role == Qt::DecorationRole)
     {
