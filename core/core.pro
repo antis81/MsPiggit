@@ -12,8 +12,8 @@ TARGET = MsPiggit
 TEMPLATE = app
 DESTDIR = $$BIN_BASE
 
-INCLUDEPATH += . ../libs ../libs/libqgit2 ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
-#DEPENDPATH += $$PWD/../libs/libqgit2
+INCLUDEPATH += . ../libs/libqgit2 ../libs/libqgit2/include \
+            ../libs/libqgit2/libgit2 ../libs/libqgit2/libgit2/include
 
 win32-msvc: LIBEXT=lib
 else: LIBEXT=a
@@ -34,24 +34,33 @@ SOURCES += \
     ui/repowindow.cpp \
     model/commitmodel.cpp \
     model/referencemodel.cpp \
-    model/submodulemodel.cpp \
     model/msptypeinfo.cpp \
     model/treeitem.cpp \
     model/treebuilder.cpp \
-    ui/refdelegate.cpp
+    ui/refdelegate.cpp \
+    model/repomodel.cpp \
+    ui/repoview.cpp \
+    ui/repodelegate.cpp \
+    model/modelaccess.cpp
 
 HEADERS  += \
     ui/repowindow.h \
     model/commitmodel.h \
     model/referencemodel.h \
-    model/submodulemodel.h \
     model/treeitem.h \
     model/msptypeinfo.h \
     model/treebuilder.h \
-    ui/refdelegate.h
+    ui/refdelegate.h \
+    ui/submoduledelegate.h \
+    model/repomodel.h \
+    ui/repoview.h \
+    ui/repodelegate.h \
+    model/modelaccess.h \
+    metatypes.h
 
 FORMS    += \
-    ui/repowindow.ui
+    ui/repowindow.ui \
+    ui/repoview.ui
 
 RESOURCES += \
     resources/MsPiggitResources.qrc

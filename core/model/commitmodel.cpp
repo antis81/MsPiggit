@@ -19,15 +19,13 @@
 
 #include "commitmodel.h"
 
-#include <src/qgitrepository.h>
-#include <src/qgitsignature.h>
-#include <src/qgitrevwalk.h>
+#include <QGit2/QGitRepository>
+#include <QGit2/QGitSignature>
+#include <QGit2/QGitRevWalk>
 
 #include <model/msptypeinfo.h>
 
 #include <QtGui/QLinearGradient>
-
-using namespace LibQGit2;
 
 
 CommitModel::CommitModel(QObject *parent)
@@ -47,6 +45,8 @@ CommitModel::~CommitModel()
 
 QVariant CommitModel::data(const QModelIndex &index, int role) const
 {
+    using namespace LibQGit2;
+
     // check on valid QModelIndex
     if (!index.isValid())
         return QVariant();
@@ -86,7 +86,7 @@ Qt::ItemFlags CommitModel::flags(const QModelIndex &index) const
 QVariant CommitModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if ( (orientation == Qt::Horizontal) && (role == Qt::DisplayRole)
-        &&  (_headers.count() > section) )
+         &&  (_headers.count() > section) )
     {
         return _headers[section];
     }
@@ -96,6 +96,8 @@ QVariant CommitModel::headerData(int section, Qt::Orientation orientation, int r
 
 QModelIndex CommitModel::index(int row, int column, const QModelIndex &parent) const
 {
+    using namespace LibQGit2;
+
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
@@ -117,6 +119,8 @@ QModelIndex CommitModel::index(int row, int column, const QModelIndex &parent) c
 
 QModelIndex CommitModel::parent(const QModelIndex &index) const
 {
+    using namespace LibQGit2;
+
     return QModelIndex();
 
     if (!index.isValid())
@@ -136,11 +140,13 @@ QModelIndex CommitModel::parent(const QModelIndex &index) const
 
 int CommitModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return _commits.count();
 }
 
 int CommitModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     //! @todo Return the selected header count for commits.
     return _headers.count();
 }
@@ -148,22 +154,34 @@ int CommitModel::columnCount(const QModelIndex &parent) const
 /**
   Setup the commit model starting with the HEAD commit.
   */
-void CommitModel::setHeadCommit(const QGitCommit &commit)
+void CommitModel::initialize(const LibQGit2::QGitRepository &repo)
 {
-    if (commit.isNull())
-        return;
-
     beginResetModel();
 
     _commits.clear();
 
+    if ( !repo.isNull() && !repo.isEmpty() )
+        walkCommits(repo);
+
     //! @todo Read all commits using lazy loading. Cache is required for large repositories!
 
+    endResetModel();
+
+    emit initialized();
+}
+
+void CommitModel::walkCommits(const LibQGit2::QGitRepository &repo)
+{
+    using namespace LibQGit2;
+
     // read all commits from _headCommit downwards
-    QGitRevWalk walker(commit.owner());
+    QGitRevWalk walker(repo);
     walker.setSorting(QGitRevWalk::Topological | QGitRevWalk::Time);
 
-    walker.push(commit); // initialize the walker
+    // initialize walker
+    walker.pushGlob("refs/heads");
+    walker.pushGlob("refs/remotes");
+    walker.pushHead();
 
     // walk revisions
     QGitCommit c;
@@ -171,14 +189,12 @@ void CommitModel::setHeadCommit(const QGitCommit &commit)
     {
         _commits.append(c);
     }
-
-    endResetModel();
 }
 
 /**
   Help function to get the commit data.
   */
-QVariant CommitModel::commitData(int col, const QGitCommit *commit) const
+QVariant CommitModel::commitData(int col, const LibQGit2::QGitCommit *commit) const
 {
     switch (col)
     {

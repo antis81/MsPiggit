@@ -23,12 +23,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStringList>
 
-#include <src/qgitcommit.h>
+#include <QGit2/QGitCommit>
 
-//namespace LibQGit2
-//{
-//    class QGitCommit;
-//}
 
 /**
   @brief Represents a commit history model. Currently Git only, but support for other VCS is planned for the future.
@@ -56,11 +52,19 @@ public:
     /**
       Sets the commit pointing to HEAD. This is the 'root'.
       */
-    void setHeadCommit(const LibQGit2::QGitCommit &commit);
+    void initialize(const LibQGit2::QGitRepository &repo);
+
+signals:
+    void initialized();
 
 private:
     QList<LibQGit2::QGitCommit>     _commits; //!< ordered list of commits.
     QStringList                     _headers; //!< column headers
+
+    /**
+      Walks the commit history.
+      */
+    void walkCommits(const LibQGit2::QGitRepository &repo);
 
     /**
       Helper function to retreive the correct text for the column specified by the model index.

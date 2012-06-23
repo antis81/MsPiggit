@@ -17,23 +17,25 @@
 **    along with MsPiggit.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SUBMODULEMODEL_H
-#define SUBMODULEMODEL_H
+#ifndef REPOMODEL_H
+#define REPOMODEL_H
 
 #include <QtCore/QAbstractItemModel>
+#include <QtCore/QSharedPointer>
 
 class TreeItem;
 
 namespace LibQGit2
 {
     class QGitRepository;
+    class QGitTree;
 }
 
-class SubmoduleModel : public QAbstractItemModel
+class RepoModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit SubmoduleModel(QObject *parent = 0);
+    explicit RepoModel(QObject *parent = 0);
     
     /**
       Get data from a @see QGitReference to edit or view a reference (branch, tag, remote).
@@ -53,6 +55,10 @@ public:
 private:
     TreeItem *      _mainRepoItem;
 
+    /**
+      * Reads all submodules recursive.
+      */
+    void parseSubmodules(TreeItem *parentItem, const LibQGit2::QGitRepository &repo);
 };
 
-#endif // SUBMODULEMODEL_H
+#endif // REPOMODEL_H

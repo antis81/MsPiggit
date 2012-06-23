@@ -24,7 +24,7 @@
 
 #include <model/commitmodel.h>
 #include <model/referencemodel.h>
-#include <model/submodulemodel.h>
+#include <model/repomodel.h>
 
 namespace LibQGit2
 {
@@ -35,6 +35,9 @@ namespace Ui
 {
     class RepoWindow;
 }
+
+class RepoView;
+
 
 /**
 This is the main window to display a repositories content and dependencies.
@@ -48,20 +51,14 @@ public:
     ~RepoWindow();
 
 private slots:
-    /**
-      Open a repository.
-      */
     void openRepository();
+    void initializeRepoStatus();
 
 private:
-    Ui::RepoWindow *ui;
+    Ui::RepoWindow *    ui;
 
-    CommitModel     _commitModel;       //!< Manages the commit history.
-    ReferenceModel  _refModel;          //!< Manages the repos references
-    SubmoduleModel  _submoduleModel;    //!< Manages the submodules
-
-    //! @todo _repo is currently used to hold a valid reference to the active repository; find better solution
-    LibQGit2::QGitRepository        _repo; //!< the active repository
+    RepoView *          _repoView;  //!< pointer to the central widget
+    RepoModel           _repoModel; //!< Manages the submodules
 
     /**
       Setup the main menu actions.
@@ -81,24 +78,6 @@ private:
       @return True if a directory exists at path. Otherwise false.
       */
     bool checkDirExists(const QString &path) const;
-
-    /**
-      Initializes the commit history view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initCommitHistory(const LibQGit2::QGitRepository &repo);
-
-    /**
-      Initializes the references (branches, tags, remotes) view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initReferences(const LibQGit2::QGitRepository &repo);
-
-    /**
-      Initializes the submodule view with an existing QGitRepository.
-      The repository must be valid and opened before.
-      */
-    void initSubmodules(const LibQGit2::QGitRepository &repo);
 
     /**
       Show the repository name in the window title.

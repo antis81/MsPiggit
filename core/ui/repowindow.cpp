@@ -24,39 +24,33 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QLabel>
 
-#include <src/qgitrepository.h>
-#include <src/qgitcommit.h>
-#include <src/qgitexception.h>
+#include <QGit2/QGitError>
 
-#include <model/commitmodel.h>
-#include <model/referencemodel.h>
-#include <model/submodulemodel.h>
+#include <model/modelaccess.h>
 
-#include <ui/refdelegate.h>
-
-using namespace LibQGit2;
+#include <ui/repodelegate.h>
+#include <ui/repoview.h>
 
 
 RepoWindow::RepoWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::RepoWindow)
+    , _repoView(new RepoView())
 {
     ui->setupUi(this);
 
     setupMainMenu();
 
+    setCentralWidget(_repoView);
+
 #ifdef Q_OS_MACX
-    ui->treeRepoRefs->setAttribute(Qt::WA_MacShowFocusRect, 0);
     ui->treeSubmodules->setAttribute(Qt::WA_MacShowFocusRect, 0);
 #endif
 
-    // setup the views
-    ui->tableCommits->setModel(&_commitModel);
-    ui->tableCommits->horizontalHeader()->setHighlightSections(false);
-    ui->tableCommits->horizontalHeader()->setMovable(true);
-    ui->treeRepoRefs->setModel(&_refModel);
-    ui->treeRepoRefs->setItemDelegate(new RefDelegate());
-    ui->treeSubmodules->setModel(&_submoduleModel);
+    ui->treeSubmodules->setModel(&_repoModel);
+    ui->treeSubmodules->setItemDelegate(new RepoDelegate());
+
+    connect(ModelAccess::instance().commitModelPtr(), SIGNAL(initialized()), this, SLOT(initializeRepoStatus()));
 }
 
 RepoWindow::~RepoWindow()
@@ -84,35 +78,51 @@ void RepoWindow::openRepository()
     setupRepoView(fd.selectedFiles().first());
 }
 
+void RepoWindow::initializeRepoStatus()
+{
+    ui->statusBar->showMessage(tr("%1 commits in repository").arg(ModelAccess::instance().commitModel().rowCount()));
+}
+
 void RepoWindow::setupRepoView(QString path)
 {
+    using namespace LibQGit2;
+
     if (path.isEmpty() || !checkDirExists(path))
         return;
 
+    QGitRepository repo;
+
     // open git repository and initialize views
-    try
+    if ( !repo.discoverAndOpen(path) )
     {
-        _repo.discoverAndOpen(path);
-        updateWindowTitle( _repo );
-    }
-    catch (LibQGit2::QGitException e)
-    {
-        QMessageBox::critical( this, tr("Unable to open repository."), e.message() );
-        return;
+        QMessageBox::critical( this, tr("Unable to open repository.")
+                               , QString("Unable to open repository:\n%2").arg(QGitError::lastMessage())
+                               );
     }
 
-    // setup the views
-    initCommitHistory(_repo);
-    initReferences(_repo);
-    initSubmodules(_repo);
+    updateWindowTitle( repo );
+
+    // setup the models
+    _repoModel.initialize( repo );
+    ModelAccess::instance().reinitialize( repo );
 }
 
-void RepoWindow::updateWindowTitle(const QGitRepository &repo)
+void RepoWindow::updateWindowTitle(const LibQGit2::QGitRepository &repo)
 {
-    QString title = "Repository: " + repo.name();
-    if ( repo.isBare() )
-        title += QString(" (BARE)");
-    setWindowTitle(title);
+
+    QString repoText;
+    if (repo.isNull())
+    {
+        repoText = tr("<< no repository >>");
+    }
+    else
+    {
+        repoText = repo.name();
+        if (repo.isBare())
+            repoText += QString(" (BARE)");
+    }
+
+    setWindowTitle( QString("Repository: %1").arg(repoText) );
 }
 
 bool RepoWindow::checkDirExists(const QString &path) const
@@ -126,43 +136,4 @@ bool RepoWindow::checkDirExists(const QString &path) const
     }
 
     return true;
-}
-
-void RepoWindow::initCommitHistory(const QGitRepository &repo)
-{
-    if (repo.isEmpty())
-    {
-        // This is a fresh repo. So no refs or commits in there yet.
-        //! @todo Visualization of empty repo?
-        return;
-    }
-
-    // Lookup the HEAD ref.
-    const QGitRef headRef = repo.head();
-    if (headRef.isNull())
-    {
-        QMessageBox::critical(0,"",tr("Couldn't find HEAD commit. Aborting ..."));
-        return;
-    }
-
-    // lookup the HEAD commit
-    _commitModel.setHeadCommit( repo.lookupCommit(headRef.oid()) );
-    ui->tableCommits->resizeColumnsToContents();
-
-    //! @todo For testing. All rows shall contain the "short" message format instead of the complete commit message.
-    //ui->tableCommits->resizeRowsToContents();
-
-    //! @todo Set count label as view of the commit model.
-    ui->statusBar->showMessage(tr("%1 commits in repository").arg(_commitModel.rowCount()));
-}
-
-void RepoWindow::initReferences(const QGitRepository &repo)
-{
-    _refModel.setupRefs(repo);
-}
-
-void RepoWindow::initSubmodules(const QGitRepository &repo)
-{
-    //! @todo Submodules must be separated from the main repo as it should be the "root submodule".
-    _submoduleModel.initialize(repo);
 }

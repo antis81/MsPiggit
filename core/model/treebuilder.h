@@ -15,7 +15,7 @@ public:
     static TreeBuilder &instance();
 
     void insertItem(TreeItem *item, TreeItem *startItem
-                    , QString path, const QString &filter, const QString &sep = QString("/"));
+                    , QString path, const QString &exclude = QString(), const QString &sep = QString("/"));
 
 private:
     static TreeBuilder *        _instance;

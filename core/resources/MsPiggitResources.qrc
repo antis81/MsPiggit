@@ -7,5 +7,7 @@
         <file>icons/tag.png</file>
         <file>images/bg.png</file>
         <file>icons/folder.png</file>
+        <file>icons/repo.svg</file>
+        <file>icons/subrepo.svg</file>
     </qresource>
 </RCC>
