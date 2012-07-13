@@ -29,6 +29,8 @@ ENDIF ()
 find_package(Qt4 4.3 REQUIRED)
 include( ${QT_USE_FILE} )
 
+include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/../libs/libqgit2)
+
 qt4_wrap_ui( MSPIGGIT_UI_HEADERS ${MSPIGGIT_UI} )
 qt4_wrap_cpp( MSPIGGIT_MOC_HEADERS ${MSPIGGIT_SRC} )
 qt4_add_resources( MSPIGGIT_RESOURCE_SRC ${MSPIGGIT_RESOURCE} )
