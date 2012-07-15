@@ -90,7 +90,7 @@ void registerBasicTypes()
     MSPTypeInfo::instance().addField("__HEADER_TAGS__", "tooltip", QObject::tr("The active repositories version tags."));
 
     MSPTypeInfo::instance().registerType("__FOLDER__");
-    MSPTypeInfo::instance().addField("__FOLDER__", "icon", QIcon(":/icons/folder.png"));
+    MSPTypeInfo::instance().addField("__FOLDER__", "icon", QIcon(":/icons/folder.svg"));
 
     MSPTypeInfo::instance().registerType("repo");
     MSPTypeInfo::instance().addField("repo", "icon", QIcon(":/icons/repo.svg"));
