@@ -52,6 +52,7 @@ public:
 
 private slots:
     void openRepository();
+    void onOpenRepository();
     void initializeRepoStatus();
 
 private:

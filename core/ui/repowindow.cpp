@@ -68,14 +68,26 @@ void RepoWindow::setupMainMenu()
 
 void RepoWindow::openRepository()
 {
-    QFileDialog fd(this);
-    fd.setFilter(QDir::AllDirs | QDir::Hidden);
-    fd.setDirectory(QDir::home());
-    fd.setWindowTitle( tr("Open a Repository") );
-    if ( (fd.exec() != QDialog::Accepted) || fd.selectedFiles().isEmpty() )
+    QFileDialog *fd = new QFileDialog(this);
+#ifdef Q_OS_MAC
+    fd->setFilter(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
+#else
+    fd->setFileMode(QFileDialog::Directory);
+#endif
+    fd->setDirectory(QDir::home());
+    fd->setWindowTitle( tr("Open a Git repository") );
+    fd->open(this, SLOT(onOpenRepository()));
+}
+
+void RepoWindow::onOpenRepository()
+{
+    QFileDialog *fd = dynamic_cast<QFileDialog *>(sender());
+    Q_ASSERT(fd != 0);
+
+    if ( fd->selectedFiles().isEmpty() )
         return;
 
-    setupRepoView(fd.selectedFiles().first());
+    setupRepoView(fd->selectedFiles().first());
 }
 
 void RepoWindow::initializeRepoStatus()
