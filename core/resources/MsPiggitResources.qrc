@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/splash.png</file>
         <file>styles/main.css</file>
         <file>icons/branch.png</file>
         <file>icons/remote.png</file>
@@ -9,5 +8,6 @@
         <file>icons/folder.png</file>
         <file>icons/repo.svg</file>
         <file>icons/subrepo.svg</file>
+        <file>images/splash.svg</file>
     </qresource>
 </RCC>
