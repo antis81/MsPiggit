@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     RepoWindow w;
 
     //show splash
-    QPixmap splashPic = QPixmap(":/images/splash.png").scaledToHeight(200);
+    QPixmap splashPic = QPixmap(":/images/splash.svg").scaledToHeight(200);
     splashPic.setMask(splashPic.mask());
     showSplash(&w, splashPic);
 
